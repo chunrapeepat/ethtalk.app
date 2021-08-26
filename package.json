@@ -1,11 +1,14 @@
 {
-  "name": "@scaffold-eth/monorepo",
+  "name": "ethtalk.app",
   "version": "1.0.0",
   "keywords": [
     "ethereum",
     "react",
-    "uniswap",
-    "workspaces",
+    "typescript",
+    "ethers",
+    "scaffoldeth",
+    "ens",
+    "ethereum-sso",
     "yarn"
   ],
   "private": true,
