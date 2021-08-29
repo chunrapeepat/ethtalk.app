@@ -1,5 +1,6 @@
 body {
   margin: 0;
+  /* TODO: remove this before deploy */
   padding: 100px;
 }
 

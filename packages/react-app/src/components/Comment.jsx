@@ -1,60 +1,105 @@
-import React, { createElement, useState } from "react";
-import { Comment as AntdComment, Tooltip, Avatar } from "antd";
+import React, { useState } from "react";
+import styled from "styled-components";
+import { Comment as AntdComment, Tooltip, Avatar, Divider } from "antd";
 import moment from "moment";
-import { DislikeOutlined, LikeOutlined, DislikeFilled, LikeFilled } from "@ant-design/icons";
+import { LikeTwoTone, LikeOutlined, MinusOutlined } from "@ant-design/icons";
+
+const LikeButton = styled.div`
+  display: flex;
+  align-items: center;
+  margin-right: 7px;
+  cursor: pointer;
+  & > span {
+    margin-left: 2px;
+  }
+`;
+const TotalReply = styled.div`
+  font-style: italic;
+`;
+const CommentContainer = styled.div`
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  background: white;
+  padding: 0 7px;
+  padding-right: 12px;
+  margin-bottom: 12px;
+`;
+const ReplyInput = styled.div`
+  width: 100%;
+  border: 0;
+  outline: none;
+  padding: 7px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+  color: #999;
+  background-color: #fafafa;
+
+  &:hover {
+    background-color: white;
+  }
+
+  ${props =>
+    props.disabled
+      ? `
+    cursor: not-allowed;
+  `
+      : ""}
+  }
+`;
 
 const Comment = ({ children }) => {
   const [likes, setLikes] = useState(0);
-  const [dislikes, setDislikes] = useState(0);
   const [action, setAction] = useState(null);
 
   const like = () => {
     setLikes(1);
-    setDislikes(0);
     setAction("liked");
   };
 
-  const dislike = () => {
-    setLikes(0);
-    setDislikes(1);
-    setAction("disliked");
-  };
-
   const actions = [
-    <Tooltip key="comment-basic-like" title="Like">
-      <span onClick={like}>
-        {createElement(action === "liked" ? LikeFilled : LikeOutlined)}
-        <span className="comment-action">{likes}</span>
-      </span>
+    <Tooltip key="comment-like" title="Like">
+      <LikeButton onClick={like}>
+        <div>{action === "liked" ? <LikeTwoTone /> : <LikeOutlined />}</div>
+        <span>{likes}</span>
+      </LikeButton>
     </Tooltip>,
-    <Tooltip key="comment-basic-dislike" title="Dislike">
-      <span onClick={dislike}>
-        {React.createElement(action === "disliked" ? DislikeFilled : DislikeOutlined)}
-        <span className="comment-action">{dislikes}</span>
-      </span>
-    </Tooltip>,
-    <span key="comment-basic-repjkly-to">3 repiles</span>,
+    <TotalReply>0 repiles</TotalReply>,
   ];
 
   return (
-    <AntdComment
-      actions={actions}
-      author={<a>thechun.eth</a>}
-      avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" alt="Han Solo" />}
-      content={
-        <p>
-          We supply a series of design principles, practical patterns and high quality design resources (Sketch and
-          Axure), to help people create their product prototypes beautifully and efficiently.
-        </p>
-      }
-      datetime={
-        <Tooltip title={moment().format("YYYY-MM-DD HH:mm:ss")}>
-          <span>{moment().fromNow()}</span>
-        </Tooltip>
-      }
-    >
-      {children}
-    </AntdComment>
+    <CommentContainer>
+      <AntdComment
+        actions={actions}
+        author={
+          <a href="https://app.ens.domains/name/thechun.eth" target="_blank">
+            0x79A3...0c4d
+          </a>
+        }
+        avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" alt="Han Solo" />}
+        content={
+          <p>
+            We supply a series of design principles, practical patterns and high quality design resources (Sketch and
+            Axure), to help people create their product prototypes beautifully and efficiently.
+          </p>
+        }
+        datetime={
+          <Tooltip title={moment().format("YYYY-MM-DD HH:mm:ss")}>
+            <span>{moment().fromNow()}</span>
+          </Tooltip>
+        }
+      >
+        {children}
+        <AntdComment
+          content={
+            // TODO: If reply > 0; remove marginTop
+            <ReplyInput style={{ marginTop: -15 }} disabled={true}>
+              Add a comment...
+            </ReplyInput>
+          }
+        />
+      </AntdComment>
+    </CommentContainer>
   );
 };
 

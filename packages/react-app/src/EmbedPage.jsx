@@ -1,6 +1,5 @@
 import styled from "styled-components";
-import Comment from "./components/Comment";
-import CommentEditor from "./components/CommentEditor";
+import { Comment, Reply, CommentEditor } from "./components";
 import { Divider } from "antd";
 
 const Footer = styled.span`
@@ -15,16 +14,18 @@ const EmbedPage = () => {
   return (
     <>
       <h3>26 comments</h3>
-      <Comment>
+      {/* TODO: remove margin if total comment = 0 */}
+      <div style={{ marginTop: 24 }}>
+        <Comment>
+          <Reply />
+          <Reply />
+          <Reply />
+        </Comment>
         <Comment />
-        <Comment />
-        <Comment />
-      </Comment>
-      <Comment>
-        <Comment />
-        <Comment />
-        <Comment />
-      </Comment>
+        <Comment>
+          <Reply />
+        </Comment>
+      </div>
       <Divider />
       <CommentEditor />
       <Footer>
