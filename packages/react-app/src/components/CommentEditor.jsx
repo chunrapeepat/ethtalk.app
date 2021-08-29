@@ -62,7 +62,7 @@ const CommentEditor = ({ children }) => {
   return (
     <>
       <Patron>
-        <InfoCircleOutlined /> For patronizing, you can treat the author a beer 🍺 and attach it with this comment (1x🍺
+        <InfoCircleOutlined /> For patronizing, you can buy the author a beers 🍺 and attach it with this comment (1x🍺
         = 0.001 ETH)
       </Patron>
       <Container>
