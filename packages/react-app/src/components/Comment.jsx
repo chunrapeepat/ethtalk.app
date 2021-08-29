@@ -33,7 +33,7 @@ const Comment = ({ children }) => {
         <span className="comment-action">{dislikes}</span>
       </span>
     </Tooltip>,
-    <span key="comment-basic-reply-to">Reply to</span>,
+    <span key="comment-basic-repjkly-to">3 repiles</span>,
   ];
 
   return (

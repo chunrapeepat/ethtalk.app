@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Button from "./Button";
+import { InfoCircleOutlined } from "@ant-design/icons";
 
 const Container = styled.div`
   border: 1px solid #ddd;
@@ -26,9 +27,19 @@ const Footer = styled.div`
   margin-top: -5px;
   padding: 7px;
 `;
-const Support = styled.div`
+const Support = styled.a`
   color: #555;
   font-size: 0.8rem;
+
+  &:hover {
+    color: #555;
+    text-decoration: underline;
+  }
+`;
+const Patron = styled.div`
+  color: #888;
+  font-size: 0.8rem;
+  margin-bottom: 12px;
 `;
 
 const CommentEditor = ({ children }) => {
@@ -49,13 +60,22 @@ const CommentEditor = ({ children }) => {
   };
 
   return (
-    <Container>
-      <TextArea placeholder="Add a comment..." rows={4} disabled={true} />
-      <Footer>
-        <Support>Markdown and LaTex supported</Support>
-        <Button>Sign in with Ethereum</Button>
-      </Footer>
-    </Container>
+    <>
+      <Patron>
+        <InfoCircleOutlined /> For patronizing, you can treat the author a beer 🍺 and attach it with this comment (1x🍺
+        = 0.001 ETH)
+      </Patron>
+      <Container>
+        <TextArea placeholder="Add a comment..." rows={4} disabled={true} />
+        <Footer>
+          {/* TODO: Add link for writing instruction (to markdown file) */}
+          <Support target="_blank" href="">
+            Markdown and LaTex supported
+          </Support>
+          <Button>Sign in with Ethereum</Button>
+        </Footer>
+      </Container>
+    </>
   );
 };
 
