@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Comment from "./components/Comment";
+import CommentEditor from "./components/CommentEditor";
 import { Divider } from "antd";
 
 const Footer = styled.span`
@@ -7,6 +8,7 @@ const Footer = styled.span`
   color: #555;
   font-weight: normal;
   font-size: 0.8rem;
+  margin-top: 12px;
 `;
 
 const EmbedPage = () => {
@@ -24,7 +26,7 @@ const EmbedPage = () => {
         <Comment />
       </Comment>
       <Divider />
-      <div>Comment Writing</div>
+      <CommentEditor />
       <Footer>
         Powered by{" "}
         <a href="https://ethtalk.app" target="_blank">
