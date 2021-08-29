@@ -17,14 +17,9 @@
     "react-app:eject": "yarn workspace @scaffold-eth/react-app eject",
     "react-app:start": "yarn workspace @scaffold-eth/react-app start",
     "react-app:test": "yarn workspace @scaffold-eth/react-app test",
-    "build": "yarn workspace @scaffold-eth/react-app build --max-old-space-size=12288",
-    "start": "yarn workspace @scaffold-eth/react-app start",
-    "ipfs": "yarn workspace @scaffold-eth/react-app ipfs",
-    "surge": "yarn workspace @scaffold-eth/react-app surge",
-    "s3": "yarn workspace @scaffold-eth/react-app s3",
-    "ship": "yarn workspace @scaffold-eth/react-app ship",
-    "theme": "yarn workspace @scaffold-eth/react-app theme",
-    "watch-theme": "yarn workspace @scaffold-eth/react-app watch"
+    "firebase-api:start": "yarn workspace @ethtalk/firebase-api start",
+    "firebase-api:shell": "yarn workspace @ethtalk/firebase-api shell",
+    "firebase-api:deploy": "yarn workspace @ethtalk/firebase-api deploy"
   },
   "workspaces": {
     "packages": [
@@ -42,7 +37,7 @@
       "**/jest",
       "**/jest/**",
       "**/@graphprotocol/graph-ts",
-      "**/@graphprotocol/graph-ts/**",
+      "**/@graphprotocol/graph-ts/**"
     ]
   },
   "dependencies": {}
