@@ -22,7 +22,7 @@
     },
     "ui": {
       "enabled": true,
-      "port": 5000
+      "port": 8000
     }
   }
 }
