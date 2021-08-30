@@ -1,6 +1,5 @@
 import styled from "styled-components";
-import { Comment, Reply, CommentEditor } from "./components";
-import { Divider } from "antd";
+import { CommentWidget } from "./components";
 
 const Footer = styled.span`
   display: block;
@@ -13,21 +12,7 @@ const Footer = styled.span`
 const EmbedPage = () => {
   return (
     <>
-      <h3>26 comments</h3>
-      {/* TODO: remove margin if total comment = 0 */}
-      <div style={{ marginTop: 24 }}>
-        <Comment>
-          <Reply />
-          <Reply />
-          <Reply />
-        </Comment>
-        <Comment />
-        <Comment>
-          <Reply />
-        </Comment>
-      </div>
-      <Divider />
-      <CommentEditor />
+      <CommentWidget />
       <Footer>
         Powered by{" "}
         <a href="https://ethtalk.app" target="_blank">

@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import Icon, { InfoCircleOutlined } from "@ant-design/icons";
+import { Menu, Dropdown } from "antd";
+import MetaMaskIconSVG from "../assets/metamask.svg";
+import WalletConnectIconSVG from "../assets/walletconnect.svg";
 import Button from "./Button";
-import { InfoCircleOutlined } from "@ant-design/icons";
 
 const Container = styled.div`
   border: 1px solid #ddd;
@@ -41,6 +44,24 @@ const Patron = styled.div`
   font-size: 0.8rem;
   margin-bottom: 12px;
 `;
+const SignInItem = styled.div`
+  display: flex;
+  align-items: center;
+
+  & svg {
+    margin-right: 7px;
+  }
+`;
+const MetaMaskIcon = () => (
+  <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+    <image href={MetaMaskIconSVG} height="20" width="20" />
+  </svg>
+);
+const WalletConnectIcon = () => (
+  <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+    <image href={WalletConnectIconSVG} height="20" width="20" />
+  </svg>
+);
 
 const CommentEditor = ({ children }) => {
   const [likes, setLikes] = useState(0);
@@ -59,6 +80,23 @@ const CommentEditor = ({ children }) => {
     setAction("disliked");
   };
 
+  const signInOptions = (
+    <Menu>
+      <Menu.Item key="0">
+        <SignInItem>
+          <Icon component={MetaMaskIcon} />
+          <div>Connect with MetaMask</div>
+        </SignInItem>
+      </Menu.Item>
+      <Menu.Item key="1">
+        <SignInItem>
+          <Icon component={WalletConnectIcon} />
+          <div>Connect with WalletConnect</div>
+        </SignInItem>
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <>
       <Patron>
@@ -72,7 +110,9 @@ const CommentEditor = ({ children }) => {
           <Support target="_blank" href="">
             Markdown and LaTex supported
           </Support>
-          <Button>Sign in with Ethereum</Button>
+          <Dropdown overlay={signInOptions} trigger={["click"]} placement="topRight">
+            <Button>Sign in with Ethereum</Button>
+          </Dropdown>
         </Footer>
       </Container>
     </>
