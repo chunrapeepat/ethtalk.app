@@ -1,6 +1,7 @@
-import web3 from "web3";
 import * as functions from "firebase-functions";
 import { authenticate, getAuthenticationChallenge } from "./controllers/auth";
+
+const web3Utils = require("web3-utils");
 
 /**
  * Returns a nonce given a public address
@@ -12,7 +13,7 @@ import { authenticate, getAuthenticationChallenge } from "./controllers/auth";
 export const getNonce = functions.https.onCall(async (data) => {
   const { publicAddress } = data;
 
-  if (!web3.utils.isAddress(publicAddress)) {
+  if (!web3Utils.isAddress(publicAddress)) {
     throw new functions.https.HttpsError(
       "invalid-argument",
       "invalid public address format"
@@ -38,7 +39,7 @@ export const getNonce = functions.https.onCall(async (data) => {
 export const login = functions.https.onCall(async (data) => {
   const { publicAddress, signature } = data;
 
-  if (!web3.utils.isAddress(publicAddress)) {
+  if (!web3Utils.isAddress(publicAddress)) {
     throw new functions.https.HttpsError(
       "invalid-argument",
       "invalid public address format"

@@ -7,7 +7,7 @@ import {
 } from "../utils/scaffoldFunctions";
 
 const recoverSignature = (nonce: string, signature: string) => {
-  const msg = `Login to EthTalk!!! ${nonce}`;
+  const msg = `SignIn with Ethereum, EthTalk: ${nonce}`;
   const address = utils.verifyMessage(msg, signature);
   return address;
 };
@@ -32,10 +32,10 @@ export const authenticate = async (
 };
 
 export const getAuthenticationChallenge = async (publicAddress: string) => {
-  const hasNonce = await getNonce({ publicAddress });
+  const oldNonce = await getNonce({ publicAddress });
 
   let nonce;
-  if (!hasNonce) {
+  if (!oldNonce) {
     nonce = await createProfile({ publicAddress });
   } else {
     nonce = await updateNonce({ publicAddress });

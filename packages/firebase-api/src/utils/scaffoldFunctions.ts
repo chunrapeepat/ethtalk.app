@@ -44,10 +44,10 @@ export const updateNonce = async ({
 
 export const getNonce = async ({
   publicAddress,
-}: UserProfileParams): Promise<string> => {
+}: UserProfileParams): Promise<string | null> => {
   const userDoc = await firestore.collection("users").doc(publicAddress).get();
   if (!userDoc.exists) {
-    throw new Error("document not found");
+    return null;
   }
 
   const { nonce } = userDoc.data() as any;

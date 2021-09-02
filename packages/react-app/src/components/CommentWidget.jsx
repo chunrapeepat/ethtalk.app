@@ -6,7 +6,6 @@ const CommentWidget = () => {
   return (
     <>
       <h3>26 comments</h3>
-      {/* TODO: remove margin if total comment = 0 */}
       <div style={{ marginTop: 24 }}>
         <Comment>
           <Reply />
