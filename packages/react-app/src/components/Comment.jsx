@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { Comment as AntdComment, Tooltip, Avatar, Divider } from "antd";
+import { Comment as AntdComment, Tooltip } from "antd";
 import moment from "moment";
-import { LikeTwoTone, LikeOutlined, MinusOutlined } from "@ant-design/icons";
+import { LikeTwoTone, LikeOutlined } from "@ant-design/icons";
+import Blockie from "./Blockie";
+import Address from "./Address";
 
 const LikeButton = styled.div`
   display: flex;
@@ -47,8 +49,13 @@ const ReplyInput = styled.div`
       : ""}
   }
 `;
+const Avatar = styled.div`
+  & canvas {
+    border-radius: 5px;
+  }
+`;
 
-const Comment = ({ children }) => {
+const Comment = (props, { children }) => {
   const [likes, setLikes] = useState(0);
   const [action, setAction] = useState(null);
 
@@ -71,21 +78,19 @@ const Comment = ({ children }) => {
     <CommentContainer>
       <AntdComment
         actions={actions}
-        author={
-          <a href="https://app.ens.domains/name/thechun.eth" target="_blank">
-            0x79A3...0c4d
-          </a>
+        author={<Address address={props.authorPublicAddress} />}
+        avatar={
+          <Avatar>
+            <Blockie address={props.authorPublicAddress} size={9} />
+          </Avatar>
         }
-        avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" alt="Han Solo" />}
         content={
-          <p>
-            We supply a series of design principles, practical patterns and high quality design resources (Sketch and
-            Axure), to help people create their product prototypes beautifully and efficiently.
-          </p>
+          // TODO: support latex and markdown
+          <p>{props.data}</p>
         }
         datetime={
-          <Tooltip title={moment().format("YYYY-MM-DD HH:mm:ss")}>
-            <span>{moment().fromNow()}</span>
+          <Tooltip title={moment(props.createdAt.toDate()).format("YYYY-MM-DD HH:mm:ss")}>
+            <span>{moment(props.createdAt.toDate()).fromNow()}</span>
           </Tooltip>
         }
       >

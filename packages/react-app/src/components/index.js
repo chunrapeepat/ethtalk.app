@@ -14,7 +14,7 @@
 // export { default as Timeline } from "./Timeline";
 // export { default as TokenBalance } from "./TokenBalance";
 // export { default as Wallet } from "./Wallet";
-// export { default as Blockie } from "./Blockie";
+export { default as Blockie } from "./Blockie";
 export { default as Address } from "./Address";
 export { default as Comment } from "./Comment";
 export { default as Reply } from "./Reply";

@@ -87,7 +87,7 @@ const Profile = styled.div`
   & canvas {
     width: 25px;
     height: 25px;
-    border-radius: 50%;
+    border-radius: 3px;
   }
 `;
 const Error = styled.div`
