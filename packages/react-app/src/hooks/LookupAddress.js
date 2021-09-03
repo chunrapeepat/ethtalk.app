@@ -27,6 +27,8 @@ const lookupAddress = async (provider, address) => {
 
       const resolvedAddress = await provider.resolveName(reportedName);
 
+      console.log({ reportedName, resolvedAddress });
+
       if (address && utils.getAddress(address) === utils.getAddress(resolvedAddress)) {
         return reportedName;
       }

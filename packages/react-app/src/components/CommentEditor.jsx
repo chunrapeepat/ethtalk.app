@@ -15,7 +15,9 @@ import { auth, firestore } from "../utils/firebase";
 import { signInWithCustomToken, signOut } from "@firebase/auth";
 import { collection, doc, setDoc, addDoc, getDoc } from "@firebase/firestore";
 import useFirebaseAuth from "../hooks/FirebaseAuth";
-import { copyToClipboard, displayAddress, hashURL } from "../utils/helper";
+import { copyToClipboard, hashURL } from "../utils/helper";
+import Address from "./Address";
+import Blockie from "./Blockie";
 
 const { ethers } = require("ethers");
 
@@ -78,9 +80,11 @@ const Profile = styled.div`
   border: 1px solid #ccc;
   border-radius: 3px;
   margin-right: 5px;
-  padding: 2.75px;
+  display: flex;
+  align-items: center;
+  padding: 2px;
 
-  & img {
+  & canvas {
     width: 25px;
     height: 25px;
     border-radius: 50%;
@@ -131,6 +135,12 @@ const targetNetwork = NETWORKS.mainnet;
 const localProviderUrl = targetNetwork.rpcUrl;
 const localProviderUrlFromEnv = process.env.REACT_APP_PROVIDER ? process.env.REACT_APP_PROVIDER : localProviderUrl;
 const localProvider = new ethers.providers.StaticJsonRpcProvider(localProviderUrlFromEnv);
+const scaffoldEthProvider = navigator.onLine
+  ? new ethers.providers.StaticJsonRpcProvider("https://rpc.scaffoldeth.io:48544")
+  : null;
+const mainnetInfura = navigator.onLine
+  ? new ethers.providers.StaticJsonRpcProvider("https://mainnet.infura.io/v3/" + INFURA_ID)
+  : null;
 
 const CommentEditor = ({ commentURL }) => {
   const [injectedProvider, setInjectedProvider] = useState();
@@ -139,6 +149,7 @@ const CommentEditor = ({ commentURL }) => {
   const [value, setValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const mainnetProvider = scaffoldEthProvider && scaffoldEthProvider._network ? scaffoldEthProvider : mainnetInfura;
 
   // Sign in with Firebase custom token
   const signInWithEthereum = async () => {
@@ -146,6 +157,7 @@ const CommentEditor = ({ commentURL }) => {
     try {
       const customToken = await firebaseLogin(userSigner);
       await signInWithCustomToken(auth, customToken);
+      setError("");
     } catch (e) {
       setError(e.message);
     }
@@ -165,6 +177,7 @@ const CommentEditor = ({ commentURL }) => {
     }
     // Sign out from Firebase
     signOut(auth);
+    setError("");
   };
 
   const loadWeb3Modal = useCallback(
@@ -254,7 +267,9 @@ const CommentEditor = ({ commentURL }) => {
   const profileOptions = (
     <Menu>
       <Menu.Item key="address">
-        <DropdownItem disabled>{displayAddress(publicAddress)}</DropdownItem>
+        <DropdownItem disabled>
+          <Address ensProvider={mainnetProvider} address={publicAddress} />
+        </DropdownItem>
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item
@@ -330,7 +345,7 @@ const CommentEditor = ({ commentURL }) => {
             <PanelContainer>
               <Dropdown overlay={profileOptions} trigger={["click"]} placement="topRight">
                 <Profile>
-                  <img src="https://bafybeie6vfcd6xb27nru5ksj3cksmaeblvlm3vkymiyf6plvlfs7mu6jlm.ipfs.infura-ipfs.io/"></img>
+                  <Blockie address={publicAddress} size={7} />
                 </Profile>
               </Dropdown>
               <Button loading={isLoading} onClick={isLoading ? () => {} : handleSubmit}>
