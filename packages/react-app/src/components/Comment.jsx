@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Comment as AntdComment, Tooltip } from "antd";
 import moment from "moment";
 import { LikeTwoTone, LikeOutlined } from "@ant-design/icons";
 import Blockie from "./Blockie";
 import Address from "./Address";
+import useFirebaseAuth from "../hooks/FirebaseAuth";
+import { doc, onSnapshot, updateDoc } from "@firebase/firestore";
+import { firestore } from "../utils/firebase";
+import { hashURL } from "../utils/helper";
 
 const LikeButton = styled.div`
   display: flex;
@@ -55,20 +59,45 @@ const Avatar = styled.div`
   }
 `;
 
-const Comment = (props, { children }) => {
-  const [likes, setLikes] = useState(0);
-  const [action, setAction] = useState(null);
+const Comment = ({ children, id, authorPublicAddress, createdAt, data, commentURL }) => {
+  const [likes, setLikes] = useState([]);
+  const { publicAddress } = useFirebaseAuth();
 
-  const like = () => {
-    setLikes(1);
-    setAction("liked");
+  const like = async () => {
+    if (!publicAddress) return;
+
+    const prevLikes = likes;
+    let _likes = likes;
+    if (likes.includes(publicAddress)) {
+      _likes.splice(_likes.indexOf(publicAddress), 1);
+    } else {
+      _likes = [...likes, publicAddress];
+    }
+    setLikes(_likes);
+
+    try {
+      const commentDocRef = doc(firestore, "comment-boxes", hashURL(commentURL), "comments", id);
+      await updateDoc(commentDocRef, {
+        likes: _likes,
+        updatedAt: new Date(),
+      });
+    } catch (e) {
+      setLikes(prevLikes);
+    }
   };
 
+  useEffect(() => {
+    const commentDocRef = doc(firestore, "comment-boxes", hashURL(commentURL), "comments", id);
+    onSnapshot(commentDocRef, snapshot => {
+      setLikes(snapshot.data().likes);
+    });
+  }, []);
+
   const actions = [
-    <Tooltip key="comment-like" title="Like">
+    <Tooltip key="comment-like" title={publicAddress ? "Like" : "Sign in to like"}>
       <LikeButton onClick={like}>
-        <div>{action === "liked" ? <LikeTwoTone /> : <LikeOutlined />}</div>
-        <span>{likes}</span>
+        <div>{publicAddress && likes.includes(publicAddress) ? <LikeTwoTone /> : <LikeOutlined />}</div>
+        <span>{likes.length}</span>
       </LikeButton>
     </Tooltip>,
     <TotalReply>0 repiles</TotalReply>,
@@ -78,19 +107,19 @@ const Comment = (props, { children }) => {
     <CommentContainer>
       <AntdComment
         actions={actions}
-        author={<Address address={props.authorPublicAddress} />}
+        author={<Address address={authorPublicAddress} />}
         avatar={
           <Avatar>
-            <Blockie address={props.authorPublicAddress} size={9} />
+            <Blockie address={authorPublicAddress} size={9} />
           </Avatar>
         }
         content={
           // TODO: support latex and markdown
-          <p>{props.data}</p>
+          <p>{data}</p>
         }
         datetime={
-          <Tooltip title={moment(props.createdAt.toDate()).format("YYYY-MM-DD HH:mm:ss")}>
-            <span>{moment(props.createdAt.toDate()).fromNow()}</span>
+          <Tooltip title={moment(createdAt.toDate()).format("YYYY-MM-DD HH:mm:ss")}>
+            <span>{moment(createdAt.toDate()).fromNow()}</span>
           </Tooltip>
         }
       >

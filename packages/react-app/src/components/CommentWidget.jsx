@@ -15,7 +15,9 @@ const CommentWidget = () => {
     const q = query(commentCollectionRef, orderBy("createdAt", "asc"));
 
     onSnapshot(q, snapshot => {
-      setComments(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      if (snapshot.docs.length !== comments.length) {
+        setComments(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      }
     });
   }, []);
 
@@ -24,7 +26,7 @@ const CommentWidget = () => {
       <h3>{comments.length} comments</h3>
       <div style={{ marginTop: 24 }}>
         {comments.map((comment, i) => {
-          return <Comment {...comment} key={`comment_${i}`} />;
+          return <Comment commentURL={commentURL} {...comment} key={`comment_${i}`} />;
         })}
       </div>
       <Divider />
