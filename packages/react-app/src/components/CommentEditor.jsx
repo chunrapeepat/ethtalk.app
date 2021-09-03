@@ -178,6 +178,9 @@ const CommentEditor = ({ commentURL }) => {
     // Sign out from Firebase
     signOut(auth);
     setError("");
+    // 🔥 Burn private key (for Burner Wallet)
+    localStorage.removeItem("metaPrivateKey");
+    setInjectedProvider(undefined);
   };
 
   const loadWeb3Modal = useCallback(
