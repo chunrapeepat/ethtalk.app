@@ -5,6 +5,8 @@ export const hashURL = url => {
 };
 
 export const displayAddress = address => {
+  if (!address) return "";
+
   let displayAddress = address.substr(0, 6);
   displayAddress += "..." + address.substr(-4);
   return displayAddress;

@@ -3,7 +3,7 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 import Web3Modal from "web3modal";
 import styled from "styled-components";
 import Icon, { CopyOutlined, FileDoneOutlined, LinkOutlined, LogoutOutlined } from "@ant-design/icons";
-import { Menu, Dropdown } from "antd";
+import { Menu, Dropdown, Alert } from "antd";
 import MetaMaskIconSVG from "../assets/metamask.svg";
 import WalletConnectIconSVG from "../assets/walletconnect.svg";
 import BurnerWalletIconPNG from "../assets/burner-wallet.png";
@@ -53,11 +53,6 @@ const Support = styled.a`
     text-decoration: underline;
   }
 `;
-// const PatronInfo = styled.div`
-//   color: #888;
-//   font-size: 0.8rem;
-//   margin-bottom: 12px;
-// `;
 const DropdownItem = styled.div`
   display: flex;
   align-items: center;
@@ -90,6 +85,9 @@ const Profile = styled.div`
     height: 25px;
     border-radius: 50%;
   }
+`;
+const Error = styled.div`
+  margin-bottom: 7px;
 `;
 const MetaMaskIcon = () => (
   <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg">
@@ -139,18 +137,26 @@ const CommentEditor = ({ commentURL }) => {
   const userSigner = useUserSigner(injectedProvider, localProvider);
   const { publicAddress } = useFirebaseAuth();
   const [value, setValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   // Sign in with Firebase custom token
   const signInWithEthereum = async () => {
-    const customToken = await firebaseLogin(userSigner);
-    await signInWithCustomToken(auth, customToken);
+    setIsLoading(true);
+    try {
+      const customToken = await firebaseLogin(userSigner);
+      await signInWithCustomToken(auth, customToken);
+    } catch (e) {
+      setError(e.message);
+    }
+    setIsLoading(false);
   };
 
   useEffect(() => {
-    if (userSigner !== undefined) {
+    if (injectedProvider !== undefined && userSigner !== undefined) {
       signInWithEthereum();
     }
-  }, [userSigner]);
+  }, [injectedProvider, userSigner]);
 
   const signOutOfWeb3Modal = async () => {
     await web3Modal.clearCachedProvider();
@@ -175,26 +181,37 @@ const CommentEditor = ({ commentURL }) => {
   );
 
   const handleSubmit = async () => {
-    if (!value.trim()) return;
-    if (value.length > 2000) return;
+    setError("");
 
-    const commentBoxRef = doc(firestore, "comment-boxes", hashURL(commentURL));
-    const commentBox = await getDoc(commentBoxRef);
-    if (!commentBox.exists()) {
-      await setDoc(commentBoxRef, {
-        commentURL,
-        createdAt: new Date(),
-      });
+    if (!value.trim()) return;
+    if (value.length > 2000) {
+      setError("character limit exceeded (maximum: 2000 characters)");
+      return;
     }
-    const commentRef = collection(firestore, "comment-boxes", hashURL(commentURL), "comments");
-    await addDoc(commentRef, {
-      data: value.trim(),
-      likes: [],
-      authorPublicAddress: publicAddress,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
-    setValue("");
+
+    setIsLoading(true);
+    try {
+      const commentBoxRef = doc(firestore, "comment-boxes", hashURL(commentURL));
+      const commentBox = await getDoc(commentBoxRef);
+      if (!commentBox.exists()) {
+        await setDoc(commentBoxRef, {
+          commentURL,
+          createdAt: new Date(),
+        });
+      }
+      const commentRef = collection(firestore, "comment-boxes", hashURL(commentURL), "comments");
+      await addDoc(commentRef, {
+        data: value.trim(),
+        likes: [],
+        authorPublicAddress: publicAddress,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+      setValue("");
+    } catch (e) {
+      setError(e.message);
+    }
+    setIsLoading(false);
   };
 
   const signInOptions = (
@@ -285,10 +302,11 @@ const CommentEditor = ({ commentURL }) => {
 
   return (
     <>
-      {/* <PatronInfo>
-        <InfoCircleOutlined /> For patronizing, you can buy the author a beers 🍺 and attach it with this comment (1x🍺
-        = 0.001 ETH)
-      </PatronInfo> */}
+      {error && (
+        <Error>
+          <Alert message={`Error: ${error}`} type="error" />
+        </Error>
+      )}
       <Container>
         <TextArea
           value={value}
@@ -296,7 +314,7 @@ const CommentEditor = ({ commentURL }) => {
           placeholder="Add a comment..."
           rows={5}
           maxLength={2000}
-          disabled={!publicAddress}
+          disabled={!publicAddress || isLoading}
         />
         <Footer>
           {/* TODO: Add link for writing instruction (to markdown file) */}
@@ -304,8 +322,8 @@ const CommentEditor = ({ commentURL }) => {
             Markdown and LaTex supported
           </Support>
           {!publicAddress && (
-            <Dropdown overlay={signInOptions} trigger={["click"]} placement="topRight">
-              <Button>Sign in with Ethereum</Button>
+            <Dropdown overlay={isLoading ? <div /> : signInOptions} trigger={["click"]} placement="topRight">
+              <Button loading={isLoading}>Sign in with Ethereum</Button>
             </Dropdown>
           )}
           {publicAddress && (
@@ -315,7 +333,9 @@ const CommentEditor = ({ commentURL }) => {
                   <img src="https://bafybeie6vfcd6xb27nru5ksj3cksmaeblvlm3vkymiyf6plvlfs7mu6jlm.ipfs.infura-ipfs.io/"></img>
                 </Profile>
               </Dropdown>
-              <Button onClick={handleSubmit}>Comment</Button>
+              <Button loading={isLoading} onClick={isLoading ? () => {} : handleSubmit}>
+                Comment
+              </Button>
             </PanelContainer>
           )}
         </Footer>

@@ -8,9 +8,17 @@ const Button = styled.button`
   padding: 5px 12px;
   background-color: rgb(18, 18, 18);
 
+  ${props =>
+    props.loading
+      ? `
+  background-color: rgb(50, 50, 50);
+  cursor: not-allowed;
+  `
+      : `
   &:hover {
     color: white;
   }
+      `}
 `;
 
 export default Button;
