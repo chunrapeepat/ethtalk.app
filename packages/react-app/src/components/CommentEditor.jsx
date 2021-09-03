@@ -15,8 +15,7 @@ import { auth, firestore } from "../utils/firebase";
 import { signInWithCustomToken, signOut } from "@firebase/auth";
 import { collection, doc, setDoc, addDoc, getDoc } from "@firebase/firestore";
 import useFirebaseAuth from "../hooks/FirebaseAuth";
-import { hashURL } from "../utils/helper";
-import { data } from "autoprefixer";
+import { copyToClipboard, displayAddress, hashURL } from "../utils/helper";
 
 const { ethers } = require("ethers");
 
@@ -59,7 +58,7 @@ const Support = styled.a`
 //   font-size: 0.8rem;
 //   margin-bottom: 12px;
 // `;
-const SignInItem = styled.div`
+const DropdownItem = styled.div`
   display: flex;
   align-items: center;
 
@@ -176,6 +175,7 @@ const CommentEditor = ({ commentURL }) => {
   );
 
   const handleSubmit = async () => {
+    if (!value.trim()) return;
     if (value.length > 2000) return;
 
     const commentBoxRef = doc(firestore, "comment-boxes", hashURL(commentURL));
@@ -187,7 +187,6 @@ const CommentEditor = ({ commentURL }) => {
       });
     }
     const commentRef = collection(firestore, "comment-boxes", hashURL(commentURL), "comments");
-    console.log("should");
     await addDoc(commentRef, {
       data: value.trim(),
       likes: [],
@@ -201,7 +200,7 @@ const CommentEditor = ({ commentURL }) => {
   const signInOptions = (
     <Menu>
       <Menu.Item key="0">
-        <SignInItem
+        <DropdownItem
           onClick={() => {
             if (window.ethereum) {
               loadWeb3Modal("injected");
@@ -211,13 +210,13 @@ const CommentEditor = ({ commentURL }) => {
         >
           <Icon component={MetaMaskIcon} />
           <div>Connect with MetaMask</div>
-        </SignInItem>
+        </DropdownItem>
       </Menu.Item>
       <Menu.Item key="1">
-        <SignInItem disabled>
+        <DropdownItem disabled>
           <Icon component={WalletConnectIcon} />
           <div>Connect with WalletConnect</div>
-        </SignInItem>
+        </DropdownItem>
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item
@@ -226,10 +225,10 @@ const CommentEditor = ({ commentURL }) => {
           setInjectedProvider(null);
         }}
       >
-        <SignInItem>
+        <DropdownItem>
           <Icon component={BurnerWalletIcon} />
           <div>Connect with a Burner Wallet</div>
-        </SignInItem>
+        </DropdownItem>
       </Menu.Item>
     </Menu>
   );
@@ -237,23 +236,36 @@ const CommentEditor = ({ commentURL }) => {
   // TODO: handle profile logic
   const profileOptions = (
     <Menu>
-      <Menu.Item key="0">
-        <SignInItem>
+      <Menu.Item key="address">
+        <DropdownItem disabled>{displayAddress(publicAddress)}</DropdownItem>
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item
+        key="0"
+        onClick={() => {
+          copyToClipboard(publicAddress);
+        }}
+      >
+        <DropdownItem>
           <CopyOutlined />
           <div>Copy Address to Clipboard</div>
-        </SignInItem>
+        </DropdownItem>
       </Menu.Item>
       <Menu.Item key="1">
-        <SignInItem>
-          <LinkOutlined />
-          <div>Open in Etherscan</div>
-        </SignInItem>
+        <a target="_blank" href={`https://etherscan.io/address/${publicAddress}`}>
+          <DropdownItem>
+            <LinkOutlined />
+            <div>Open in Etherscan</div>
+          </DropdownItem>
+        </a>
       </Menu.Item>
       <Menu.Item key="2">
-        <SignInItem>
-          <FileDoneOutlined />
-          <div>Register ENS Domain</div>
-        </SignInItem>
+        <a target="_blank" href="https://app.ens.domains/">
+          <DropdownItem>
+            <FileDoneOutlined />
+            <div>Register ENS Domain</div>
+          </DropdownItem>
+        </a>
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item
@@ -263,10 +275,10 @@ const CommentEditor = ({ commentURL }) => {
           signOutOfWeb3Modal();
         }}
       >
-        <SignInItem>
+        <DropdownItem>
           <Icon component={LogoutOutlined} />
           <div>Sign Out</div>
-        </SignInItem>
+        </DropdownItem>
       </Menu.Item>
     </Menu>
   );
