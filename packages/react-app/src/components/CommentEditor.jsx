@@ -2,13 +2,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import Web3Modal from "web3modal";
 import styled from "styled-components";
-import Icon, {
-  CopyOutlined,
-  FileDoneOutlined,
-  InfoCircleOutlined,
-  LinkOutlined,
-  LogoutOutlined,
-} from "@ant-design/icons";
+import Icon, { CopyOutlined, FileDoneOutlined, LinkOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Menu, Dropdown } from "antd";
 import MetaMaskIconSVG from "../assets/metamask.svg";
 import WalletConnectIconSVG from "../assets/walletconnect.svg";
@@ -17,9 +11,12 @@ import Button from "./Button";
 import { useUserSigner } from "../hooks";
 import { INFURA_ID, NETWORKS } from "../constants";
 import { firebaseLogin } from "../utils/auth";
-import { auth } from "../utils/firebase";
+import { auth, firestore } from "../utils/firebase";
 import { signInWithCustomToken, signOut } from "@firebase/auth";
+import { collection, doc, setDoc, addDoc, getDoc } from "@firebase/firestore";
 import useFirebaseAuth from "../hooks/FirebaseAuth";
+import { hashURL } from "../utils/helper";
+import { data } from "autoprefixer";
 
 const { ethers } = require("ethers");
 
@@ -34,6 +31,7 @@ const TextArea = styled.textarea`
   outline: none;
   padding: 7px;
   border-bottom: 1px solid #ddd;
+  resize: none;
 
   &:disabled {
     background: white;
@@ -137,10 +135,11 @@ const localProviderUrl = targetNetwork.rpcUrl;
 const localProviderUrlFromEnv = process.env.REACT_APP_PROVIDER ? process.env.REACT_APP_PROVIDER : localProviderUrl;
 const localProvider = new ethers.providers.StaticJsonRpcProvider(localProviderUrlFromEnv);
 
-const CommentEditor = () => {
+const CommentEditor = ({ commentURL }) => {
   const [injectedProvider, setInjectedProvider] = useState();
   const userSigner = useUserSigner(injectedProvider, localProvider);
   const { publicAddress } = useFirebaseAuth();
+  const [value, setValue] = useState("");
 
   // Sign in with Firebase custom token
   const signInWithEthereum = async () => {
@@ -175,6 +174,29 @@ const CommentEditor = () => {
     },
     [setInjectedProvider],
   );
+
+  const handleSubmit = async () => {
+    if (value.length > 2000) return;
+
+    const commentBoxRef = doc(firestore, "comment-boxes", hashURL(commentURL));
+    const commentBox = await getDoc(commentBoxRef);
+    if (!commentBox.exists()) {
+      await setDoc(commentBoxRef, {
+        commentURL,
+        createdAt: new Date(),
+      });
+    }
+    const commentRef = collection(firestore, "comment-boxes", hashURL(commentURL), "comments");
+    console.log("should");
+    await addDoc(commentRef, {
+      data: value.trim(),
+      likes: [],
+      authorPublicAddress: publicAddress,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    setValue("");
+  };
 
   const signInOptions = (
     <Menu>
@@ -256,7 +278,14 @@ const CommentEditor = () => {
         = 0.001 ETH)
       </PatronInfo> */}
       <Container>
-        <TextArea placeholder="Add a comment..." rows={4} disabled={!publicAddress} />
+        <TextArea
+          value={value}
+          onChange={e => setValue(e.target.value)}
+          placeholder="Add a comment..."
+          rows={5}
+          maxLength={2000}
+          disabled={!publicAddress}
+        />
         <Footer>
           {/* TODO: Add link for writing instruction (to markdown file) */}
           <Support target="_blank" href="">
@@ -274,7 +303,7 @@ const CommentEditor = () => {
                   <img src="https://bafybeie6vfcd6xb27nru5ksj3cksmaeblvlm3vkymiyf6plvlfs7mu6jlm.ipfs.infura-ipfs.io/"></img>
                 </Profile>
               </Dropdown>
-              <Button>Comment</Button>
+              <Button onClick={handleSubmit}>Comment</Button>
             </PanelContainer>
           )}
         </Footer>

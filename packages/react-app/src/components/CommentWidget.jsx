@@ -18,7 +18,7 @@ const CommentWidget = () => {
         </Comment>
       </div>
       <Divider />
-      <CommentEditor />
+      <CommentEditor commentURL="https://ethtalk.app" />
     </>
   );
 };
