@@ -1,8 +1,23 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
+    match /users/{document=**} {
       allow read, write: if false;
+    }
+    match /comment-boxes/{commentBoxId} {
+      allow read: if true;
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasAll(['commentURL', 'createdAt']);
+      allow update, delete: if false;
+      
+      match /comments/{commentId} {
+        allow read: if true;
+        allow create: if request.auth != null
+          && request.resource.data.keys().hasAll(['data', 'likes', 'authorPublicAddress', 'createdAt', 'updatedAt'])
+          && request.resource.data.authorPublicAddress == request.auth.uid
+          && request.resource.data.likes.size() == 0
+          && request.resource.data.data.size() <= 2000;
+      }
     }
   }
 }
