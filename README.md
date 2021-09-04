@@ -16,7 +16,7 @@ EthTalk is a comments widget implemented and designed for the Ethereum ecosystem
 
 ### More fun ideas (feel free to contribute 😎)
 - Add verify badge for who have done Proof of Humanity
-- Buy me a beer 🍺, send ETH directly within a comment for patronizing the author
+- Buy me a beer, send 🍺 (1x🍺 = 0.001 ETH) directly within a comment for patronizing the author
 - Use your NFTs as a sticker
 - Fully customize theme (with dark mode supported 🌝)
 
