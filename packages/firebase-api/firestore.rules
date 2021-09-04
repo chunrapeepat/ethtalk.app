@@ -31,6 +31,10 @@ service cloud.firestore {
               )
             )
             // update data (edit comment)
+            || (
+              request.resource.data.data != resource.data.data
+              && resource.data.authorPublicAddress == request.auth.uid
+            )
           )
         allow delete: if request.auth != null
           && resource.data.authorPublicAddress == request.auth.uid;
