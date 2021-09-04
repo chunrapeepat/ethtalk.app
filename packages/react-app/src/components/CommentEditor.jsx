@@ -29,6 +29,15 @@ const Footer = styled.div`
 const Error = styled.div`
   margin-bottom: 7px;
 `;
+const Support = styled.a`
+  color: #555;
+  font-size: 0.8rem;
+
+  &:hover {
+    color: #555;
+    text-decoration: underline;
+  }
+`;
 
 const CommentEditor = ({ value, onChange, placeholder, footer, error, loading }) => {
   return (
@@ -47,7 +56,13 @@ const CommentEditor = ({ value, onChange, placeholder, footer, error, loading })
           maxLength={2000}
           disabled={loading}
         />
-        <Footer>{footer}</Footer>
+        <Footer>
+          {/* TODO: Add link for writing instruction (to markdown file) */}
+          <Support target="_blank" href="">
+            Markdown and LaTex supported
+          </Support>
+          {footer}
+        </Footer>
       </Container>
     </>
   );

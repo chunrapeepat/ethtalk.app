@@ -10,6 +10,7 @@ import { doc, onSnapshot, updateDoc, deleteDoc } from "@firebase/firestore";
 import { firestore } from "../utils/firebase";
 import { hashURL } from "../utils/helper";
 import CommentEditor from "./CommentEditor";
+import { Button, OutlineButton } from "./Button";
 
 const LikeButton = styled.div`
   display: flex;
@@ -70,10 +71,25 @@ const ActionContainer = styled.div`
     }
   }
 `;
+const PanelContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
+const Support = styled.a`
+  color: #555;
+  font-size: 0.8rem;
+
+  &:hover {
+    color: #555;
+    text-decoration: underline;
+  }
+`;
 
 const Comment = ({ children, id, authorPublicAddress, createdAt, data, commentURL }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [likes, setLikes] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
+  const [editedValue, setEditedValue] = useState(data);
   const { publicAddress } = useFirebaseAuth();
 
   const like = async () => {
@@ -112,6 +128,34 @@ const Comment = ({ children, id, authorPublicAddress, createdAt, data, commentUR
     const commentDocRef = doc(firestore, "comment-boxes", hashURL(commentURL), "comments", id);
     deleteDoc(commentDocRef);
   };
+
+  const editEditorFooter = (
+    <>
+      <PanelContainer>
+        <OutlineButton
+          white
+          onClick={() => {
+            setEditedValue(data);
+            setIsEdit(false);
+          }}
+          style={{ marginRight: 5 }}
+        >
+          Cancel
+        </OutlineButton>
+        <Button
+          onClick={async () => {
+            const commentDocRef = doc(firestore, "comment-boxes", hashURL(commentURL), "comments", id);
+            await updateDoc(commentDocRef, {
+              data: editedValue,
+            });
+            setIsEdit(false);
+          }}
+        >
+          Update
+        </Button>
+      </PanelContainer>
+    </>
+  );
 
   const actions = [
     <ActionContainer>
@@ -157,7 +201,7 @@ const Comment = ({ children, id, authorPublicAddress, createdAt, data, commentUR
           // TODO: support latex and markdown
           <>
             {!isEdit && <p>{data}</p>}
-            {isEdit && <CommentEditor commentURL={commentURL} defaultValue={data} />}
+            {isEdit && <CommentEditor value={editedValue} onChange={setEditedValue} footer={editEditorFooter} />}
           </>
         }
         datetime={

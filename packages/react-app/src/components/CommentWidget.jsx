@@ -8,7 +8,7 @@ import { Menu, Dropdown, Divider } from "antd";
 import MetaMaskIconSVG from "../assets/metamask.svg";
 import WalletConnectIconSVG from "../assets/walletconnect.svg";
 import BurnerWalletIconPNG from "../assets/burner-wallet.png";
-import Button from "./Button";
+import { Button } from "./Button";
 import { useUserSigner } from "../hooks";
 import { INFURA_ID, NETWORKS } from "../constants";
 import { firebaseLogin } from "../utils/auth";
@@ -22,15 +22,6 @@ import Blockie from "./Blockie";
 
 const ethers = require("ethers");
 
-const Support = styled.a`
-  color: #555;
-  font-size: 0.8rem;
-
-  &:hover {
-    color: #555;
-    text-decoration: underline;
-  }
-`;
 const DropdownItem = styled.div`
   display: flex;
   align-items: center;
@@ -296,10 +287,6 @@ const CommentWidget = () => {
 
   const commentEditorFooter = (
     <>
-      {/* TODO: Add link for writing instruction (to markdown file) */}
-      <Support target="_blank" href="">
-        Markdown and LaTex supported
-      </Support>
       {!publicAddress && (
         <Dropdown overlay={isLoading ? <div /> : signInOptions} trigger={["click"]} placement="topRight">
           <Button loading={isLoading}>Sign in with Ethereum</Button>
@@ -330,7 +317,6 @@ const CommentWidget = () => {
       </div>
       <Divider />
       <CommentEditor
-        commentURL={commentURL}
         footer={commentEditorFooter}
         error={error}
         value={value}
