@@ -25,7 +25,7 @@ const CommentContainer = styled.div`
   border-radius: 5px;
   border: 1px solid #ddd;
   background: white;
-  padding: 0 7px;
+  padding: 0 12px;
   padding-right: 12px;
   margin-bottom: 12px;
 `;
