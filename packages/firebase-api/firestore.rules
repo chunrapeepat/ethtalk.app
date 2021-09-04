@@ -32,6 +32,8 @@ service cloud.firestore {
             )
             // update data (edit comment)
           )
+        allow delete: if request.auth != null
+          && resource.data.authorPublicAddress == request.auth.uid;
       }
     }
   }
