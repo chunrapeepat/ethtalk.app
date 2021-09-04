@@ -111,14 +111,13 @@ const CommentWidget = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // load all comments
   useEffect(() => {
     const commentCollectionRef = collection(firestore, "comment-boxes", hashURL(commentURL), "comments");
     const q = query(commentCollectionRef, orderBy("createdAt", "asc"));
 
     onSnapshot(q, snapshot => {
-      if (snapshot.docs.length !== comments.length) {
-        setComments(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      }
+      setComments(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
   }, []);
 
@@ -321,7 +320,7 @@ const CommentWidget = () => {
         error={error}
         value={value}
         onChange={setValue}
-        placeholder="Add a comment..."
+        placeholder="Write a comment..."
         loading={!publicAddress || isLoading}
       />
     </>

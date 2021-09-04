@@ -6,11 +6,12 @@ import { LikeTwoTone, LikeOutlined } from "@ant-design/icons";
 import Blockie from "./Blockie";
 import Address from "./Address";
 import useFirebaseAuth from "../hooks/FirebaseAuth";
-import { doc, onSnapshot, updateDoc, deleteDoc } from "@firebase/firestore";
+import { doc, addDoc, onSnapshot, updateDoc, deleteDoc, collection, query, orderBy } from "@firebase/firestore";
 import { firestore } from "../utils/firebase";
 import { hashURL } from "../utils/helper";
 import CommentEditor from "./CommentEditor";
 import { Button, OutlineButton } from "./Button";
+import Reply from "./Reply";
 
 const LikeButton = styled.div`
   display: flex;
@@ -75,22 +76,26 @@ const PanelContainer = styled.div`
   display: flex;
   align-items: center;
 `;
-const Support = styled.a`
-  color: #555;
-  font-size: 0.8rem;
 
-  &:hover {
-    color: #555;
-    text-decoration: underline;
-  }
-`;
-
-const Comment = ({ children, id, authorPublicAddress, createdAt, data, commentURL }) => {
-  const [isLoading, setIsLoading] = useState(false);
+const Comment = ({ id, authorPublicAddress, createdAt, data, commentURL }) => {
   const [likes, setLikes] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
+  const [isReply, setIsReply] = useState(false);
+  const [replyValue, setReplyValue] = useState("");
   const [editedValue, setEditedValue] = useState(data);
+  const [replyError, setReplyError] = useState();
   const { publicAddress } = useFirebaseAuth();
+  const [replies, setReplies] = useState([]);
+
+  // load all replies
+  useEffect(() => {
+    const replyCollectionRef = collection(firestore, "comment-boxes", hashURL(commentURL), "comments", id, "replies");
+    const q = query(replyCollectionRef, orderBy("createdAt", "asc"));
+
+    onSnapshot(q, snapshot => {
+      setReplies(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    });
+  }, []);
 
   const like = async () => {
     if (!publicAddress) return;
@@ -157,6 +162,52 @@ const Comment = ({ children, id, authorPublicAddress, createdAt, data, commentUR
     </>
   );
 
+  const replyEditorFooter = (
+    <>
+      <PanelContainer>
+        <OutlineButton
+          white
+          onClick={() => {
+            setReplyValue("");
+            setIsReply(false);
+            setReplyError("");
+          }}
+          style={{ marginRight: 5 }}
+        >
+          Cancel
+        </OutlineButton>
+        <Button
+          onClick={async () => {
+            setReplyError("");
+
+            if (!replyValue.trim()) return;
+            if (replyValue.length > 2000) {
+              setReplyError("character limit exceeded (maximum: 2000 characters)");
+              return;
+            }
+
+            try {
+              const replyRef = collection(firestore, "comment-boxes", hashURL(commentURL), "comments", id, "replies");
+              await addDoc(replyRef, {
+                data: replyValue.trim(),
+                likes: [],
+                authorPublicAddress: publicAddress,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+              });
+              setReplyValue("");
+              setIsReply(false);
+            } catch (e) {
+              setReplyError(e.message);
+            }
+          }}
+        >
+          Update
+        </Button>
+      </PanelContainer>
+    </>
+  );
+
   const actions = [
     <ActionContainer>
       <div>
@@ -167,7 +218,7 @@ const Comment = ({ children, id, authorPublicAddress, createdAt, data, commentUR
           </LikeButton>
         </Tooltip>
       </div>
-      <div>0 replies</div>
+      <div>{replies.length} replies</div>
       {publicAddress === authorPublicAddress && (
         <>
           <div className="action" onClick={() => setIsEdit(true)}>
@@ -210,15 +261,34 @@ const Comment = ({ children, id, authorPublicAddress, createdAt, data, commentUR
           </Tooltip>
         }
       >
-        {children}
-        <AntdComment
-          content={
-            // TODO: If reply > 0; remove marginTop
-            <ReplyInput style={{ marginTop: -15 }} disabled={!publicAddress}>
-              Add a comment...
-            </ReplyInput>
-          }
-        />
+        {replies.length === 0 && <div style={{ display: "inline-block", marginTop: 25 }}></div>}
+        {replies.map((reply, i) => {
+          return <Reply commentId={id} commentURL={commentURL} {...reply} key={`reply_${id}_${i}`} />;
+        })}
+        {isReply && (
+          <div style={{ marginTop: replies.length === 0 ? -30 : 15, marginBottom: 15 }}>
+            <CommentEditor
+              error={replyError}
+              placeholder="Write a reply..."
+              value={replyValue}
+              onChange={setReplyValue}
+              footer={replyEditorFooter}
+            />
+          </div>
+        )}
+        {!isReply && (
+          <ReplyInput
+            style={{ marginTop: replies.length === 0 ? -30 : 15, marginBottom: 15 }}
+            disabled={!publicAddress}
+            onClick={() => {
+              if (publicAddress) {
+                setIsReply(true);
+              }
+            }}
+          >
+            Write a reply...
+          </ReplyInput>
+        )}
       </AntdComment>
     </CommentContainer>
   );

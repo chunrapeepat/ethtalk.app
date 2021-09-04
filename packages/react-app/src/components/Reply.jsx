@@ -1,62 +1,172 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { Comment as AntdComment, Tooltip, Avatar } from "antd";
+import { Comment as AntdComment, Tooltip, Popconfirm } from "antd";
 import moment from "moment";
 import { LikeTwoTone, LikeOutlined } from "@ant-design/icons";
+import Address from "./Address";
+import Blockie from "./Blockie";
+import useFirebaseAuth from "../hooks/FirebaseAuth";
+import { doc, onSnapshot, updateDoc, deleteDoc } from "@firebase/firestore";
+import { firestore } from "../utils/firebase";
+import { hashURL } from "../utils/helper";
+import { OutlineButton, Button } from "./Button";
+import CommentEditor from "./CommentEditor";
 
+const PanelContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
 const LikeButton = styled.div`
   display: flex;
   align-items: center;
-  margin-right: 7px;
   cursor: pointer;
   & > span {
     margin-left: 2px;
   }
 `;
+const Avatar = styled.div`
+  & canvas {
+    border-radius: 5px;
+  }
+`;
+const ActionContainer = styled.div`
+  width: inherit;
+  display: flex;
 
-const Reply = ({ children }) => {
-  const [likes, setLikes] = useState(0);
-  const [action, setAction] = useState(null);
+  & > div {
+    margin-right: 10px;
+  }
 
-  const like = () => {
-    setLikes(1);
-    setAction("liked");
+  & > div.action {
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+`;
+
+const Reply = ({ commentId, id, authorPublicAddress, createdAt, data, commentURL }) => {
+  const [likes, setLikes] = useState([]);
+  const [isEdit, setIsEdit] = useState(false);
+  const [editedValue, setEditedValue] = useState(data);
+  const { publicAddress } = useFirebaseAuth();
+
+  const like = async () => {
+    if (!publicAddress) return;
+
+    const prevLikes = likes;
+    let _likes = likes;
+    if (likes.includes(publicAddress)) {
+      _likes.splice(_likes.indexOf(publicAddress), 1);
+    } else {
+      _likes = [...likes, publicAddress];
+    }
+    setLikes(_likes);
+
+    try {
+      const replyRef = doc(firestore, "comment-boxes", hashURL(commentURL), "comments", commentId, "replies", id);
+      await updateDoc(replyRef, {
+        likes: _likes,
+        updatedAt: new Date(),
+      });
+    } catch (e) {
+      setLikes(prevLikes);
+    }
   };
 
+  useEffect(() => {
+    const replyRef = doc(firestore, "comment-boxes", hashURL(commentURL), "comments", commentId, "replies", id);
+    onSnapshot(replyRef, snapshot => {
+      if (snapshot.data()) {
+        setLikes(snapshot.data().likes);
+      }
+    });
+  }, []);
+
+  const deleteReply = () => {
+    const replyRef = doc(firestore, "comment-boxes", hashURL(commentURL), "comments", commentId, "replies", id);
+    deleteDoc(replyRef);
+  };
+
+  const editEditorFooter = (
+    <>
+      <PanelContainer>
+        <OutlineButton
+          white
+          onClick={() => {
+            setEditedValue(data);
+            setIsEdit(false);
+          }}
+          style={{ marginRight: 5 }}
+        >
+          Cancel
+        </OutlineButton>
+        <Button
+          onClick={async () => {
+            const replyRef = doc(firestore, "comment-boxes", hashURL(commentURL), "comments", commentId, "replies", id);
+            await updateDoc(replyRef, {
+              data: editedValue,
+            });
+            setIsEdit(false);
+          }}
+        >
+          Update
+        </Button>
+      </PanelContainer>
+    </>
+  );
+
   const actions = [
-    <Tooltip key="comment-like" title="Like">
-      <LikeButton onClick={like}>
-        <div>{action === "liked" ? <LikeTwoTone /> : <LikeOutlined />}</div>
-        <span>{likes}</span>
-      </LikeButton>
-    </Tooltip>,
+    <ActionContainer>
+      <div>
+        <Tooltip key="comment-like" title={publicAddress ? "Like" : "Sign in to like"}>
+          <LikeButton onClick={like}>
+            <div>{publicAddress && likes.includes(publicAddress) ? <LikeTwoTone /> : <LikeOutlined />}</div>
+            <span>{likes.length}</span>
+          </LikeButton>
+        </Tooltip>
+      </div>
+      {publicAddress === authorPublicAddress && (
+        <>
+          <div className="action" onClick={() => setIsEdit(true)}>
+            Edit
+          </div>
+          <Popconfirm
+            title="Are you sure to delete this comment?"
+            onConfirm={deleteReply}
+            onCancel={() => {}}
+            okText="Yes"
+            cancelText="No"
+          >
+            <div className="action">Delete</div>
+          </Popconfirm>
+        </>
+      )}
+    </ActionContainer>,
   ];
 
   return (
     <AntdComment
       actions={actions}
-      author={
-        <Tooltip title="0x79A375feFbF90878502eADBA4A89697896B60c4d">
-          <a href="https://app.ens.domains/name/thechun.eth" target="_blank">
-            0x79A3...0c4d
-          </a>
-        </Tooltip>
+      author={<Address address={authorPublicAddress} />}
+      avatar={
+        <Avatar>
+          <Blockie address={authorPublicAddress} size={9} />
+        </Avatar>
       }
-      avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" alt="Han Solo" />}
       content={
-        <p>
-          We supply a series of design principles, practical patterns and high quality design resources (Sketch and
-          Axure), to help people create their product prototypes beautifully and efficiently.
-        </p>
+        // TODO: support latex and markdown
+        <>
+          {!isEdit && <p>{data}</p>}
+          {isEdit && <CommentEditor value={editedValue} onChange={setEditedValue} footer={editEditorFooter} />}
+        </>
       }
       datetime={
-        <Tooltip title={moment().format("YYYY-MM-DD HH:mm:ss")}>
-          <span>{moment().fromNow()}</span>
+        <Tooltip title={moment(createdAt.toDate()).format("YYYY-MM-DD HH:mm:ss")}>
+          <span>{moment(createdAt.toDate()).fromNow()}</span>
         </Tooltip>
       }
-    >
-      {children}
-    </AntdComment>
+    ></AntdComment>
   );
 };
 
