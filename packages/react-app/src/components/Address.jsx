@@ -1,6 +1,9 @@
 import { Skeleton } from "antd";
 import React from "react";
+import { INFURA_ID } from "../constants";
 import { useLookupAddress } from "../hooks";
+
+const { ethers } = require("ethers");
 
 // changed value={address} to address={address}
 
@@ -26,12 +29,19 @@ import { useLookupAddress } from "../hooks";
               (ex. by default "https://etherscan.io/" or for xdai "https://blockscout.com/poa/xdai/")
   - Provide fontSize={fontSize} to change the size of address text
 */
+const scaffoldEthProvider = navigator.onLine
+  ? new ethers.providers.StaticJsonRpcProvider("https://rpc.scaffoldeth.io:48544")
+  : null;
+const mainnetInfura = navigator.onLine
+  ? new ethers.providers.StaticJsonRpcProvider("https://mainnet.infura.io/v3/" + INFURA_ID)
+  : null;
 
 export default function Address(props) {
+  const mainnetProvider = scaffoldEthProvider && scaffoldEthProvider._network ? scaffoldEthProvider : mainnetInfura;
   const address = props.value || props.address;
   const size = props.size || "short";
 
-  const ens = useLookupAddress(props.ensProvider, address);
+  const ens = useLookupAddress(mainnetProvider, address);
 
   if (!address) {
     return (

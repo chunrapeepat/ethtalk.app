@@ -135,12 +135,6 @@ const targetNetwork = NETWORKS.mainnet;
 const localProviderUrl = targetNetwork.rpcUrl;
 const localProviderUrlFromEnv = process.env.REACT_APP_PROVIDER ? process.env.REACT_APP_PROVIDER : localProviderUrl;
 const localProvider = new ethers.providers.StaticJsonRpcProvider(localProviderUrlFromEnv);
-const scaffoldEthProvider = navigator.onLine
-  ? new ethers.providers.StaticJsonRpcProvider("https://rpc.scaffoldeth.io:48544")
-  : null;
-const mainnetInfura = navigator.onLine
-  ? new ethers.providers.StaticJsonRpcProvider("https://mainnet.infura.io/v3/" + INFURA_ID)
-  : null;
 
 const CommentEditor = ({ commentURL }) => {
   const [injectedProvider, setInjectedProvider] = useState();
@@ -149,7 +143,6 @@ const CommentEditor = ({ commentURL }) => {
   const [value, setValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const mainnetProvider = scaffoldEthProvider && scaffoldEthProvider._network ? scaffoldEthProvider : mainnetInfura;
 
   // Sign in with Firebase custom token
   const signInWithEthereum = async () => {
@@ -178,9 +171,6 @@ const CommentEditor = ({ commentURL }) => {
     // Sign out from Firebase
     signOut(auth);
     setError("");
-    // 🔥 Burn private key (for Burner Wallet)
-    localStorage.removeItem("metaPrivateKey");
-    setInjectedProvider(undefined);
   };
 
   const loadWeb3Modal = useCallback(
@@ -271,7 +261,7 @@ const CommentEditor = ({ commentURL }) => {
     <Menu>
       <Menu.Item key="address">
         <DropdownItem disabled>
-          <Address ensProvider={mainnetProvider} address={publicAddress} />
+          <Address address={publicAddress} />
         </DropdownItem>
       </Menu.Item>
       <Menu.Divider />

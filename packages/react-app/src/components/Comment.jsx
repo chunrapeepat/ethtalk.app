@@ -1,26 +1,22 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { Comment as AntdComment, Tooltip } from "antd";
+import { Comment as AntdComment, Popconfirm, Tooltip } from "antd";
 import moment from "moment";
 import { LikeTwoTone, LikeOutlined } from "@ant-design/icons";
 import Blockie from "./Blockie";
 import Address from "./Address";
 import useFirebaseAuth from "../hooks/FirebaseAuth";
-import { doc, onSnapshot, updateDoc } from "@firebase/firestore";
+import { doc, onSnapshot, updateDoc, deleteDoc } from "@firebase/firestore";
 import { firestore } from "../utils/firebase";
 import { hashURL } from "../utils/helper";
 
 const LikeButton = styled.div`
   display: flex;
   align-items: center;
-  margin-right: 7px;
   cursor: pointer;
   & > span {
     margin-left: 2px;
   }
-`;
-const TotalReply = styled.div`
-  font-style: italic;
 `;
 const CommentContainer = styled.div`
   border-radius: 5px;
@@ -58,6 +54,21 @@ const Avatar = styled.div`
     border-radius: 5px;
   }
 `;
+const ActionContainer = styled.div`
+  width: inherit;
+  display: flex;
+
+  & > div {
+    margin-right: 10px;
+  }
+
+  & > div.action {
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+`;
 
 const Comment = ({ children, id, authorPublicAddress, createdAt, data, commentURL }) => {
   const [likes, setLikes] = useState([]);
@@ -89,18 +100,43 @@ const Comment = ({ children, id, authorPublicAddress, createdAt, data, commentUR
   useEffect(() => {
     const commentDocRef = doc(firestore, "comment-boxes", hashURL(commentURL), "comments", id);
     onSnapshot(commentDocRef, snapshot => {
-      setLikes(snapshot.data().likes);
+      if (snapshot.data()) {
+        setLikes(snapshot.data().likes);
+      }
     });
   }, []);
 
+  const deleteComment = () => {
+    const commentDocRef = doc(firestore, "comment-boxes", hashURL(commentURL), "comments", id);
+    deleteDoc(commentDocRef);
+  };
+
   const actions = [
-    <Tooltip key="comment-like" title={publicAddress ? "Like" : "Sign in to like"}>
-      <LikeButton onClick={like}>
-        <div>{publicAddress && likes.includes(publicAddress) ? <LikeTwoTone /> : <LikeOutlined />}</div>
-        <span>{likes.length}</span>
-      </LikeButton>
-    </Tooltip>,
-    <TotalReply>0 repiles</TotalReply>,
+    <ActionContainer>
+      <div>
+        <Tooltip key="comment-like" title={publicAddress ? "Like" : "Sign in to like"}>
+          <LikeButton onClick={like}>
+            <div>{publicAddress && likes.includes(publicAddress) ? <LikeTwoTone /> : <LikeOutlined />}</div>
+            <span>{likes.length}</span>
+          </LikeButton>
+        </Tooltip>
+      </div>
+      <div>0 replies</div>
+      {publicAddress === authorPublicAddress && (
+        <>
+          <div className="action">Edit</div>
+          <Popconfirm
+            title="Are you sure to delete this comment?"
+            onConfirm={deleteComment}
+            onCancel={() => {}}
+            okText="Yes"
+            cancelText="No"
+          >
+            <div className="action">Delete</div>
+          </Popconfirm>
+        </>
+      )}
+    </ActionContainer>,
   ];
 
   return (
