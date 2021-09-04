@@ -7,7 +7,7 @@ import {
 } from "../utils/scaffoldFunctions";
 
 const recoverSignature = (nonce: string, signature: string) => {
-  const msg = `SignIn with Ethereum, EthTalk: ${nonce}`;
+  const msg = `SignIn with Ethereum, ETHTalk: ${nonce}`;
   const address = utils.verifyMessage(msg, signature);
   return address;
 };

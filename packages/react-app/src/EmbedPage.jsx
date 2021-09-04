@@ -16,7 +16,7 @@ const EmbedPage = () => {
       <Footer>
         Powered by{" "}
         <a href="https://ethtalk.app" target="_blank">
-          EthTalk
+          ETHTalk
         </a>
       </Footer>
     </>

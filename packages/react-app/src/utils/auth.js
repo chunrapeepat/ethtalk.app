@@ -8,7 +8,7 @@ export const firebaseLogin = async signer => {
   const { nonce } = nonceResult.data;
 
   // sign nonce
-  const msg = `SignIn with Ethereum, EthTalk: ${nonce}`;
+  const msg = `SignIn with Ethereum, ETHTalk: ${nonce}`;
   const signature = await signer.signMessage(msg);
 
   const login = httpsCallable(functions, "login");
