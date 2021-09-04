@@ -8,10 +8,17 @@ EthTalk is a comments widget implemented and designed for the Ethereum ecosystem
 
 ### Features
 - Open source 🌍
-- Sign-in with your non-custodial Ethereum accounts (No Facebook, Google, or Twitter accounts needed) 
+- ENS (Ethereum Name Service) supported 😎
+- Sign-in with your non-custodial Ethereum accounts (No Facebook, Google, or Twitter accounts needed 🙅‍♀️)
 - 🦊 MetaMask and 🔥 [BurnerWallet](https://www.xdaichain.com/for-users/wallets/burner-wallet) supported
-- LaTex supported 🧮 for commenting
-- All the data 💽 is stored on Firebase Firestore
+- LaTex supported for commenting 🧮
+- All the data is stored on Firebase Firestore 💽
+
+### More fun ideas (feel free to contribute 😎)
+- Add verify badge for who have done Proof of Humanity
+- Buy me a beer 🍺, send ETH directly within a comment for patronizing the author
+- Use your NFTs as a sticker
+- Fully customize theme (with dark mode supported 🌝)
 
 ### Setting up project
 1. Clone this repository
