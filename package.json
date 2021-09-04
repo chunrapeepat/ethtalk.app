@@ -17,6 +17,7 @@
     "react-app:eject": "yarn workspace @scaffold-eth/react-app eject",
     "react-app:start": "yarn workspace @scaffold-eth/react-app start",
     "react-app:test": "yarn workspace @scaffold-eth/react-app test",
+    "react-app:deploy": "yarn workspace @scaffold-eth/react-app deploy",
     "firebase-api:start": "yarn workspace @ethtalk/firebase-api start",
     "firebase-api:shell": "yarn workspace @ethtalk/firebase-api shell",
     "firebase-api:deploy": "yarn workspace @ethtalk/firebase-api deploy"

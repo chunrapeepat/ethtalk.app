@@ -23,7 +23,7 @@ export const Button = styled.button`
     props.loading
       ? `
   background-color: rgb(50, 50, 50);
-  cursor: not-allowed;
+  cursor: wait;
   `
       : `
   &:hover {
