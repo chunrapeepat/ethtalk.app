@@ -1,12 +1,17 @@
 # 💬 ETHTalk
 ![ETHTalk Cover](https://bafybeicy5tjxjqsfc5tddiszrjsv6fijnsg377kyoqtlttmcfogxd2n4eq.ipfs.infura-ipfs.io/)
-EthTalk is a comments widget implemented for the Ethereum ecosystem that leveraged the ideas of ENS and Ethereum Single Sign-on built with 🏗 Scaffold-ETH, lets visitors leave comments on your website with their non-custodial Ethereum account
+EthTalk is a comments widget implemented and designed for the Ethereum ecosystem built on top of [🏗 Scaffold-ETH](https://github.com/austintgriffith/scaffold-eth), lets visitors leave comments on your website with their non-custodial Ethereum account
 
 > Try it yourself: https://ethtalk.app/
 
 ### Why ETHTalk?
 
 ### Features
+- Open source 🌍
+- Sign-in with your non-custodial Ethereum accounts (No Facebook, Google, or Twitter accounts needed) 
+- 🦊 MetaMask and 🔥 [BurnerWallet](https://www.xdaichain.com/for-users/wallets/burner-wallet) supported
+- LaTex supported 🧮 for commenting
+- All the data 💽 is stored on Firebase Firestore
 
 ### Setting up project
 1. Clone this repository
