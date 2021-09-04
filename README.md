@@ -14,7 +14,7 @@ EthTalk is a comments widget implemented and designed for the Ethereum ecosystem
 - LaTex supported for commenting 🧮
 - All the data is stored on Firebase Firestore 💽
 
-### More fun ideas (feel free to contribute 😎)
+### More fun ideas (feel free to contribute)
 - Add verify badge for who have done Proof of Humanity
 - Buy me a beer, send 🍺 (1x🍺 = 0.001 ETH) directly within a comment for patronizing the author
 - Use your NFTs as a sticker
@@ -43,6 +43,9 @@ cd packages/react-app && cp .env.example .env && vim .env
 yarn react-app:start
 ```
 7. Experiment and develop your AWESOME 😎 features
+
+### How it works?
+
 
 ### Tech stack
 - Frontend: Firebase, React, Antd, [scaffold-eth/serverless-auth](https://github.com/austintgriffith/scaffold-eth/tree/serverless-auth) template
