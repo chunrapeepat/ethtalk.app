@@ -9,6 +9,7 @@ import useFirebaseAuth from "../hooks/FirebaseAuth";
 import { doc, onSnapshot, updateDoc, deleteDoc } from "@firebase/firestore";
 import { firestore } from "../utils/firebase";
 import { hashURL } from "../utils/helper";
+import CommentEditor from "./CommentEditor";
 
 const LikeButton = styled.div`
   display: flex;
@@ -72,6 +73,7 @@ const ActionContainer = styled.div`
 
 const Comment = ({ children, id, authorPublicAddress, createdAt, data, commentURL }) => {
   const [likes, setLikes] = useState([]);
+  const [isEdit, setIsEdit] = useState(false);
   const { publicAddress } = useFirebaseAuth();
 
   const like = async () => {
@@ -124,7 +126,9 @@ const Comment = ({ children, id, authorPublicAddress, createdAt, data, commentUR
       <div>0 replies</div>
       {publicAddress === authorPublicAddress && (
         <>
-          <div className="action">Edit</div>
+          <div className="action" onClick={() => setIsEdit(true)}>
+            Edit
+          </div>
           <Popconfirm
             title="Are you sure to delete this comment?"
             onConfirm={deleteComment}
@@ -142,7 +146,7 @@ const Comment = ({ children, id, authorPublicAddress, createdAt, data, commentUR
   return (
     <CommentContainer>
       <AntdComment
-        actions={actions}
+        actions={!isEdit ? actions : undefined}
         author={<Address address={authorPublicAddress} />}
         avatar={
           <Avatar>
@@ -151,7 +155,10 @@ const Comment = ({ children, id, authorPublicAddress, createdAt, data, commentUR
         }
         content={
           // TODO: support latex and markdown
-          <p>{data}</p>
+          <>
+            {!isEdit && <p>{data}</p>}
+            {isEdit && <CommentEditor commentURL={commentURL} defaultValue={data} />}
+          </>
         }
         datetime={
           <Tooltip title={moment(createdAt.toDate()).format("YYYY-MM-DD HH:mm:ss")}>
@@ -163,7 +170,7 @@ const Comment = ({ children, id, authorPublicAddress, createdAt, data, commentUR
         <AntdComment
           content={
             // TODO: If reply > 0; remove marginTop
-            <ReplyInput style={{ marginTop: -15 }} disabled={true}>
+            <ReplyInput style={{ marginTop: -15 }} disabled={!publicAddress}>
               Add a comment...
             </ReplyInput>
           }
