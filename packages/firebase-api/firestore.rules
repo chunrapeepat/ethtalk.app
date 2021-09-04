@@ -17,6 +17,21 @@ service cloud.firestore {
           && request.resource.data.authorPublicAddress == request.auth.uid
           && request.resource.data.likes.size() == 0
           && request.resource.data.data.size() <= 2000;
+        allow update: if request.auth != null
+          && (
+            // update likes
+            (
+              request.resource.data.likes != resource.data.likes
+              && request.resource.data.updatedAt != resource.data.updatedAt
+              && (
+                // if unlike
+                (request.auth.uid in resource.data.likes && !(request.auth.uid in request.resource.data.likes) && (resource.data.likes.size() - request.resource.data.likes.size() == 1))
+                // if like
+                || (!(request.auth.uid in resource.data.likes) && request.auth.uid in request.resource.data.likes && (request.resource.data.likes.size() - resource.data.likes.size() == 1))
+              )
+            )
+            // update data (edit comment)
+          )
       }
     }
   }
