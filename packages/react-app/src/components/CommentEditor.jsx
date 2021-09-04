@@ -59,7 +59,7 @@ const CommentEditor = ({ value, onChange, placeholder, footer, error, loading })
         <Footer>
           {/* TODO: Add link for writing instruction (to markdown file) */}
           <Support target="_blank" href="">
-            Markdown and LaTex supported
+            LaTex is supported
           </Support>
           {footer}
         </Footer>

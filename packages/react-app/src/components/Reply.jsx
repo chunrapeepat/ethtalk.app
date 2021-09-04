@@ -156,7 +156,6 @@ const Reply = ({ commentId, id, authorPublicAddress, createdAt, data, commentURL
         </Avatar>
       }
       content={
-        // TODO: support latex and markdown
         <>
           {!isEdit && (
             <p>
