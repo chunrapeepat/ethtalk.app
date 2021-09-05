@@ -3,7 +3,7 @@ const LandingPage = () => {
     <>
       <div
         dangerouslySetInnerHTML={{
-          __html: `<iframe src="https://ethtalk.app/embed?url=https://ethtalk.app" width="100%" onload="setInterval(() => {this.style.height=(this.contentWindow.document.body.scrollHeight)+'px';}, 100)" frameBorder="0"></iframe>`,
+          __html: `<iframe src="https://ethtalk.app/embed?url=https://ethtalk.app" id="ethtalk" width="100%" frameBorder="0"></iframe>`,
         }}
       />
     </>

@@ -40,5 +40,11 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <script>
+      window.addEventListener("message", function (e) {
+        -1 != e.data.indexOf("height:") &&
+          (document.getElementById("ethtalk").style.height = e.data.split(":")[1] + "px");
+      });
+    </script>
   </body>
 </html>

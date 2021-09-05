@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import styled from "styled-components";
 import { CommentWidget } from "./components";
 import { useLocation } from "react-router";
@@ -13,6 +14,13 @@ const Footer = styled.span`
 const EmbedPage = () => {
   const search = useLocation().search;
   const url = new URLSearchParams(search).get("url");
+
+  useEffect(() => {
+    setInterval(() => {
+      const height = document.documentElement.scrollHeight;
+      parent.postMessage(`height:${height}`, "*");
+    }, 500);
+  }, []);
 
   if (!url) {
     return <span>Error: no url specified</span>;
