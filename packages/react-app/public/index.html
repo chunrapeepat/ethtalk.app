@@ -42,7 +42,8 @@
     -->
     <script>
       window.addEventListener("message", function (e) {
-        -1 != e.data.indexOf("height:") &&
+        typeof e.data === "string" &&
+          -1 != e.data.indexOf("height:") &&
           (document.getElementById("ethtalk").style.height = e.data.split(":")[1] + "px");
       });
     </script>

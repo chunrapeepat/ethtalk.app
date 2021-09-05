@@ -36,11 +36,12 @@ const useUserSigner = (injectedProvider, localProvider) => {
           console.log("🔑 Incoming Private Key...");
           rawPK = incomingPK;
           window.history.pushState({}, "", "/");
-          const currentPrivateKey = window.localStorage.getItem("metaPrivateKey");
-          if (currentPrivateKey && currentPrivateKey !== rawPK) {
-            window.localStorage.setItem("metaPrivateKey_backup" + Date.now(), currentPrivateKey);
-          }
-          window.localStorage.setItem("metaPrivateKey", rawPK);
+          // ETHTalk: skip access localStorage from iframe
+          // const currentPrivateKey = window.localStorage.getItem("metaPrivateKey");
+          // if (currentPrivateKey && currentPrivateKey !== rawPK) {
+          //   window.localStorage.setItem("metaPrivateKey_backup" + Date.now(), currentPrivateKey);
+          // }
+          // window.localStorage.setItem("metaPrivateKey", rawPK);
         }
       }
 

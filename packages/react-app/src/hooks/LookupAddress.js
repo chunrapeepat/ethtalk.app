@@ -45,8 +45,10 @@ const useLookupAddress = (provider, address) => {
   // const [ensCache, setEnsCache] = useLocalStorage('ensCache_'+address); Writing directly due to sync issues
 
   useEffect(() => {
-    let cache = window.localStorage.getItem("ensCache_" + address);
-    cache = cache && JSON.parse(cache);
+    // let cache = window.localStorage.getItem("ensCache_" + address);
+    // cache = cache && JSON.parse(cache);
+    // ETHTalk: skip access localStorage from iframe
+    const cache = null;
 
     if (cache && cache.timestamp > Date.now()) {
       setEnsName(cache.name);
@@ -54,13 +56,14 @@ const useLookupAddress = (provider, address) => {
       lookupAddress(provider, address).then(name => {
         if (name) {
           setEnsName(name);
-          window.localStorage.setItem(
-            "ensCache_" + address,
-            JSON.stringify({
-              timestamp: Date.now() + 360000,
-              name,
-            }),
-          );
+          // ETHTalk: skip access localStorage from iframe
+          // window.localStorage.setItem(
+          //   "ensCache_" + address,
+          //   JSON.stringify({
+          //     timestamp: Date.now() + 360000,
+          //     name,
+          //   }),
+          // );
         }
       });
     }

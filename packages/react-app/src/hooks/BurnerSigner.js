@@ -11,14 +11,17 @@ export default function useBurnerSigner(provider) {
   const setValue = value => {
     try {
       setStoredValue(value);
-      window.localStorage.setItem(key, value);
+      // ETHTalk: skip access localStorage from iframe
+      // window.localStorage.setItem(key, value);
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    const storedKey = window.localStorage.getItem(key);
+    // const storedKey = window.localStorage.getItem(key);
+    // ETHTalk: skip access localStorage from iframe
+    const storedKey = null;
     if (!storedKey) {
       console.log("generating a new key");
       const _newWallet = ethers.Wallet.createRandom();
