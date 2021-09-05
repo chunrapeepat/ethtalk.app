@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { CommentWidget } from "./components";
+import { useLocation } from "react-router";
 
 const Footer = styled.span`
   display: block;
@@ -10,9 +11,16 @@ const Footer = styled.span`
 `;
 
 const EmbedPage = () => {
+  const search = useLocation().search;
+  const url = new URLSearchParams(search).get("url");
+
+  if (!url) {
+    return <span>Error: no url specified</span>;
+  }
+
   return (
     <>
-      <CommentWidget />
+      <CommentWidget commentURL={url} />
       <Footer>
         Powered by{" "}
         <a href="https://ethtalk.app" target="_blank">

@@ -94,15 +94,13 @@ const web3Modal = new Web3Modal({
     },
   },
 });
-// TODO: pass this from props
-const commentURL = "https://ethtalk.app";
 
 const targetNetwork = NETWORKS.mainnet;
 const localProviderUrl = targetNetwork.rpcUrl;
 const localProviderUrlFromEnv = process.env.REACT_APP_PROVIDER ? process.env.REACT_APP_PROVIDER : localProviderUrl;
 const localProvider = new ethers.providers.StaticJsonRpcProvider(localProviderUrlFromEnv);
 
-const CommentWidget = () => {
+const CommentWidget = ({ commentURL }) => {
   const [comments, setComments] = useState([]);
   const [injectedProvider, setInjectedProvider] = useState();
   const userSigner = useUserSigner(injectedProvider, localProvider);
