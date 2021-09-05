@@ -44,8 +44,14 @@ yarn react-app:start
 ```
 7. Experiment and develop your AWESOME 😎 features
 
-### How it works?
-
+### How it works? (Overview)
+1. User connect their wallet to give a public address to the site
+2. Frontend send that public address to get a challenge code (nonce) from the backend
+3. Frontend give the challenge code to the wallet to sign a message with PK 🔑
+4. Frontend submit that signed message to the backend
+5. Backend received the message, proof validity, and generate a new JWT custom token to frontend
+6. Frontend use that token to sign in (using Firebase Custom Authentication)
+7. Now the user can comment, like, and reply on the web 😎
 
 ### Tech stack
 - Frontend: Firebase, React, Antd, [scaffold-eth/serverless-auth](https://github.com/austintgriffith/scaffold-eth/tree/serverless-auth) template
