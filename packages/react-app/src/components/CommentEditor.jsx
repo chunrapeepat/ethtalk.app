@@ -57,8 +57,10 @@ const CommentEditor = ({ value, onChange, placeholder, footer, error, loading })
           disabled={loading}
         />
         <Footer>
-          {/* TODO: Add link for writing instruction (to markdown file) */}
-          <Support target="_blank" href="">
+          <Support
+            target="_blank"
+            href="https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference"
+          >
             LaTex is supported
           </Support>
           {footer}
