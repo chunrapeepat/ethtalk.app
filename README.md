@@ -4,7 +4,7 @@ EthTalk is a comments widget implemented and designed for the Ethereum ecosystem
 
 > Try it yourself: https://ethtalk.app/
 
-### Why I created ETHTalk?
+### Why ETHTalk?
 Basically, for commenting on any website, you need to have a Facebook or Google accounts, or sometimes you need to register a new account with a new username/password which may have a few problems:
 
 1. All the un/pw is controlled by Google, Facebook, or some others and your security hugely depends on them.
@@ -12,7 +12,7 @@ Basically, for commenting on any website, you need to have a Facebook or Google 
 
 Would it be better if everyone could have a private key (PK) and use that PK to sign in to a lot of services which is way more secure than the password? The good news is, that has now happened with the power of Ethereum and you can now start using your ETH account to sign in and comment on any website that embedded an ETHTalk's widget (and for a username system you can register your username on the ENS domain which basically is an NFT for your profile and you have full control over it)
 
-I strongly believe that we would see some adoption about these ENS and Ethereum Single Sign-on concepts in the near future (maybe about 1-3 years from now) and this project is the one that leveraged those ideas and bring them into action, and to make that adoption happen, I'll start using it on my personal website 😎
+I strongly believe that we would see a huge adoption about these ENS and Ethereum Single Sign-on concepts in the near future (maybe about 1-3 years from now) and this project is the one that leveraged those ideas and bring them into action, and to make that adoption happen, I'll start using it on my personal website first 😎
 
 ### Features
 - Open source 🌍
