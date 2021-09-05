@@ -18,7 +18,7 @@ const firebaseConfig = {
 };
 
 // ETHTalk: skip access localStorage from iframe
-const localStorageMock = (() => {
+const mockStorage = (() => {
   let store = {};
 
   return {
@@ -37,10 +37,10 @@ const localStorageMock = (() => {
   };
 })();
 Object.defineProperty(window, "localStorage", {
-  value: localStorageMock,
+  value: mockStorage,
 });
 Object.defineProperty(window, "sessionStorage", {
-  value: localStorageMock,
+  value: mockStorage,
 });
 
 // Initialize Firebase
