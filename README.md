@@ -2,7 +2,7 @@
 ![ETHTalk Cover](https://bafybeicy5tjxjqsfc5tddiszrjsv6fijnsg377kyoqtlttmcfogxd2n4eq.ipfs.infura-ipfs.io/)
 EthTalk is a comments widget implemented and designed for the Ethereum ecosystem built on top of [🏗 Scaffold-ETH](https://github.com/austintgriffith/scaffold-eth), lets visitors leave comments on your website with their non-custodial Ethereum account
 
-> Try it yourself: https://ethtalk.app, Demo video: https://www.youtube.com/watch?v=ikJnxQJaxJA&t=1s
+> Try it yourself: https://ethtalk.app, Demo video: https://www.youtube.com/watch?v=ikJnxQJaxJA
 
 ### Why ETHTalk?
 Basically, for commenting on any website, you need to have a Facebook or Google accounts, or sometimes you need to register a new account with a new username/password which may have a few problems:
