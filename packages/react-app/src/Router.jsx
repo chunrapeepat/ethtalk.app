@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Switch,NavLink } from "react-router-dom";
 import LandingPage from "./LandingPage";
 import EmbedPage from "./EmbedPage";
 
@@ -15,6 +15,7 @@ const Router = () => {
           <Route path="/embed">
             <EmbedPage />
           </Route>
+          <Route path="/callback" element={<NavLink replace to="/" />} /> 
         </Switch>
       </BrowserRouter>
     </>

@@ -6,6 +6,7 @@ import styled from "styled-components";
 import Icon, { CopyOutlined, FileDoneOutlined, LinkOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Menu, Dropdown, Divider } from "antd";
 import MetaMaskIconSVG from "../assets/metamask.svg";
+import UnstoppableSVG from "../assets/unstoppable.svg";
 import WalletConnectIconSVG from "../assets/walletconnect.svg";
 import BurnerWalletIconPNG from "../assets/burner-wallet.png";
 import { Button } from "./Button";
@@ -19,6 +20,7 @@ import useFirebaseAuth from "../hooks/FirebaseAuth";
 import { copyToClipboard, hashURL } from "../utils/helper";
 import Address from "./Address";
 import Blockie from "./Blockie";
+import UAuth from '@uauth/js';
 
 const ethers = require("ethers");
 
@@ -60,6 +62,11 @@ const Profile = styled.div`
 const MetaMaskIcon = () => (
   <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg">
     <image href={MetaMaskIconSVG} height="20" width="20" />
+  </svg>
+);
+const UnstoppableIcon = () => (
+  <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+    <image href={UnstoppableSVG} height="20" width="20" />
   </svg>
 );
 const WalletConnectIcon = () => (
@@ -108,6 +115,7 @@ const CommentWidget = ({ commentURL }) => {
   const [value, setValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [backgroundColor, setBackgroundColor] = useState("#4b47ee");
 
   // load all comments
   useEffect(() => {
@@ -194,10 +202,42 @@ const CommentWidget = ({ commentURL }) => {
     }
     setIsLoading(false);
   };
+  const unstoppableStyle={backgroundColor,color:"white"}
+async function loginWithUnstoppable(){
+  try{
+   
+    const uauth = new UAuth({
+      clientID: process.env.REACT_APP_CLIENT_ID,
+      clientSecret: process.env.REACT_APP_CLIENT_SECRET,
+      redirectUri: process.env.REACT_APP_REDIRECT_URIS,
+    
+      // Must include both the openid and wallet scopes.
+      scope: 'openid wallet',
+  })
+  const authorization=await uauth.loginWithPopup()
+  console.log(authorization)
+  }catch(e){
 
+  }
+  
+}
   const signInOptions = (
     <Menu>
-      <Menu.Item key="0">
+      <Menu.Item key="0" style={unstoppableStyle} >
+        <DropdownItem
+          disabled={!window.ethereum}
+          backgroundColor={'#4b47ee'}
+          onMouseEnter={() => setBackgroundColor("#0b24b3")}
+          onMouseLeave={() => setBackgroundColor("#4b47ee")}
+          onMouseDown={ () => setBackgroundColor('#5361c7')} 
+          onMouseUp={() => setBackgroundColor("#4b47ee") }
+         onClick={loginWithUnstoppable}
+        >
+          <Icon component={UnstoppableIcon} />
+          <div>Login with Unstoppable</div>
+        </DropdownItem>
+      </Menu.Item>
+      <Menu.Item key="1">
         <DropdownItem
           onClick={() => {
             if (window.ethereum) {
@@ -210,7 +250,7 @@ const CommentWidget = ({ commentURL }) => {
           <div>Connect with MetaMask</div>
         </DropdownItem>
       </Menu.Item>
-      <Menu.Item key="1">
+      <Menu.Item key="2">
         <DropdownItem disabled>
           <Icon component={WalletConnectIcon} />
           <div>Connect with WalletConnect</div>
@@ -284,6 +324,7 @@ const CommentWidget = ({ commentURL }) => {
 
   const commentEditorFooter = (
     <>
+ 
       {!publicAddress && (
         <Dropdown overlay={isLoading ? <div /> : signInOptions} trigger={["click"]} placement="topRight">
           <Button loading={isLoading}>Sign in with Ethereum</Button>
