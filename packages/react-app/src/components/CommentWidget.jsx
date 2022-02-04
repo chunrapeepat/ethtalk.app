@@ -12,7 +12,7 @@ import BurnerWalletIconPNG from "../assets/burner-wallet.png";
 import { Button } from "./Button";
 import { useUserSigner } from "../hooks";
 import { INFURA_ID, NETWORKS } from "../constants";
-import { firebaseLogin } from "../utils/auth";
+import { firebaseLogin,firebaseLoginWithUnstoppable } from "../utils/auth";
 import { auth, firestore } from "../utils/firebase";
 import { signInWithCustomToken, signOut } from "@firebase/auth";
 import { collection, query, orderBy, onSnapshot, doc, setDoc, addDoc, getDoc } from "@firebase/firestore";
@@ -141,8 +141,10 @@ const CommentWidget = ({ commentURL }) => {
   async function loginWithUnstoppable() {
     setIsLoading(true);
     try {
-      await unstoppableAuth.signin();
-
+      const authorization=await unstoppableAuth.signin();
+      const customToken = await firebaseLoginWithUnstoppable(authorization?.idToken?.sub,authorization);
+      await signInWithCustomToken(auth, customToken);
+      setError("");
     } catch (e) {
       console.log(e.message)
       setIsLoading(false);
@@ -299,6 +301,8 @@ const CommentWidget = ({ commentURL }) => {
         key="signout"
         onClick={() => {
           unstoppableAuth.signout()
+          signOut(auth);
+          setError("");
         }}
       >
         <DropdownItem>
@@ -367,7 +371,7 @@ const CommentWidget = ({ commentURL }) => {
           <Button loading={isLoading}>Sign in with Ethereum</Button>
         </Dropdown>
       )}
-      {unstoppableAuth.user && (
+      {(unstoppableAuth.user && publicAddress) && (
         <PanelContainer>
           <Dropdown overlay={profileUnstoppable} trigger={["click"]} placement="topRight">
             <Profile>
@@ -379,7 +383,7 @@ const CommentWidget = ({ commentURL }) => {
           </Button>
         </PanelContainer>
       )}
-      {publicAddress && (
+      {(publicAddress && !unstoppableAuth.user) && (
         <PanelContainer>
           <Dropdown overlay={profileOptions} trigger={["click"]} placement="topRight">
             <Profile>

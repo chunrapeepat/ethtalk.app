@@ -31,6 +31,14 @@ export const authenticate = async (
   }
 };
 
+export const authUnstoppable = async (
+  publicAddress: string,
+  addOn: object
+) => {
+     return await admin.auth().createCustomToken(publicAddress,addOn);
+  
+};
+
 export const getAuthenticationChallenge = async (publicAddress: string) => {
   const oldNonce = await getNonce({ publicAddress });
 
