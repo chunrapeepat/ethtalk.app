@@ -20,8 +20,7 @@ import useFirebaseAuth from "../hooks/FirebaseAuth";
 import { copyToClipboard, hashURL } from "../utils/helper";
 import Address from "./Address";
 import Blockie from "./Blockie";
-import UAuth from '@uauth/js';
-
+import { useAuth } from "../hooks/UnstoppableAuth";
 const ethers = require("ethers");
 
 const DropdownItem = styled.div`
@@ -116,7 +115,7 @@ const CommentWidget = ({ commentURL }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [backgroundColor, setBackgroundColor] = useState("#4b47ee");
-
+  const unstoppableAuth = useAuth();
   // load all comments
   useEffect(() => {
     const commentCollectionRef = collection(firestore, "comment-boxes", hashURL(commentURL), "comments");
@@ -139,7 +138,19 @@ const CommentWidget = ({ commentURL }) => {
     }
     setIsLoading(false);
   };
+  async function loginWithUnstoppable() {
+    setIsLoading(true);
+    try {
+      await unstoppableAuth.signin();
 
+    } catch (e) {
+      console.log(e.message)
+      setIsLoading(false);
+    }
+    setIsLoading(false);
+
+
+  }
   useEffect(() => {
     if (injectedProvider !== undefined && userSigner !== undefined) {
       signInWithEthereum();
@@ -202,25 +213,8 @@ const CommentWidget = ({ commentURL }) => {
     }
     setIsLoading(false);
   };
-  const unstoppableStyle={backgroundColor,color:"white"}
-async function loginWithUnstoppable(){
-  try{
-   
-    const uauth = new UAuth({
-      clientID: process.env.REACT_APP_CLIENT_ID,
-      clientSecret: process.env.REACT_APP_CLIENT_SECRET,
-      redirectUri: process.env.REACT_APP_REDIRECT_URIS,
-    
-      // Must include both the openid and wallet scopes.
-      scope: 'openid wallet',
-  })
-  const authorization=await uauth.loginWithPopup()
-  console.log(authorization)
-  }catch(e){
+  const unstoppableStyle = { backgroundColor, color: "white" }
 
-  }
-  
-}
   const signInOptions = (
     <Menu>
       <Menu.Item key="0" style={unstoppableStyle} >
@@ -229,9 +223,9 @@ async function loginWithUnstoppable(){
           backgroundColor={'#4b47ee'}
           onMouseEnter={() => setBackgroundColor("#0b24b3")}
           onMouseLeave={() => setBackgroundColor("#4b47ee")}
-          onMouseDown={ () => setBackgroundColor('#5361c7')} 
-          onMouseUp={() => setBackgroundColor("#4b47ee") }
-         onClick={loginWithUnstoppable}
+          onMouseDown={() => setBackgroundColor('#5361c7')}
+          onMouseUp={() => setBackgroundColor("#4b47ee")}
+          onClick={loginWithUnstoppable}
         >
           <Icon component={UnstoppableIcon} />
           <div>Login with Unstoppable</div>
@@ -270,7 +264,50 @@ async function loginWithUnstoppable(){
       </Menu.Item>
     </Menu>
   );
+  const profileUnstoppable = (
+    <Menu>
+      <Menu.Item key="address">
+        <DropdownItem disabled>
+          {unstoppableAuth.user?.idToken?.sub}
 
+        </DropdownItem>
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item
+        key="0"
+        onClick={() => {
+          copyToClipboard(unstoppableAuth.user?.idToken?.sub);
+        }}
+      >
+        <DropdownItem>
+          <CopyOutlined />
+          <div>Copy Unstoppable Domain to Clipboard</div>
+        </DropdownItem>
+      </Menu.Item>
+      <Menu.Item key="1">
+        <a target="_blank" href={`https://etherscan.io/address/${unstoppableAuth.user?.idToken?.wallet_address}`}>
+          <DropdownItem>
+            <LinkOutlined />
+            <div>Open in Etherscan</div>
+          </DropdownItem>
+        </a>
+      </Menu.Item>
+
+      <Menu.Divider />
+      <Menu.Item
+        danger
+        key="signout"
+        onClick={() => {
+          unstoppableAuth.signout()
+        }}
+      >
+        <DropdownItem>
+          <Icon component={LogoutOutlined} />
+          <div>Sign Out</div>
+        </DropdownItem>
+      </Menu.Item>
+    </Menu>
+  );
   const profileOptions = (
     <Menu>
       <Menu.Item key="address">
@@ -324,11 +361,23 @@ async function loginWithUnstoppable(){
 
   const commentEditorFooter = (
     <>
- 
-      {!publicAddress && (
+
+      {(!publicAddress && !unstoppableAuth.user) && (
         <Dropdown overlay={isLoading ? <div /> : signInOptions} trigger={["click"]} placement="topRight">
           <Button loading={isLoading}>Sign in with Ethereum</Button>
         </Dropdown>
+      )}
+      {unstoppableAuth.user && (
+        <PanelContainer>
+          <Dropdown overlay={profileUnstoppable} trigger={["click"]} placement="topRight">
+            <Profile>
+              <Blockie address={unstoppableAuth.user?.idToken?.wallet_address} size={7} />
+            </Profile>
+          </Dropdown>
+          <Button loading={isLoading} onClick={isLoading ? () => { } : handleSubmit}>
+            Comment
+          </Button>
+        </PanelContainer>
       )}
       {publicAddress && (
         <PanelContainer>
@@ -337,7 +386,7 @@ async function loginWithUnstoppable(){
               <Blockie address={publicAddress} size={7} />
             </Profile>
           </Dropdown>
-          <Button loading={isLoading} onClick={isLoading ? () => {} : handleSubmit}>
+          <Button loading={isLoading} onClick={isLoading ? () => { } : handleSubmit}>
             Comment
           </Button>
         </PanelContainer>
@@ -354,13 +403,14 @@ async function loginWithUnstoppable(){
         })}
       </div>
       <Divider />
+
       <CommentEditor
         footer={commentEditorFooter}
         error={error}
         value={value}
         onChange={setValue}
         placeholder="Write a comment..."
-        loading={!publicAddress || isLoading}
+        loading={(!publicAddress && !unstoppableAuth.user) || isLoading }
       />
     </>
   );
