@@ -89,7 +89,7 @@ const HeartSvg = () => (
 const LandingPage = () => {
   const [value, setValue] = useState(`${process.env.REACT_APP_DOMAIN_NAME}`);
 
-  const codeSnippet = `<iframe src="${value}/embed?url=${value}" id="ethtalk" width="100%" frameBorder="0"></iframe>
+  const codeSnippet = `<iframe src="${process.env.REACT_APP_DOMAIN_NAME}/embed?url=${value}" id="ethtalk" width="100%" frameBorder="0"></iframe>
 
 <script>window.addEventListener("message",function(t){"string"==typeof t.data&&-1!=t.data.indexOf("height:")&&(document.getElementById("ethtalk").style.height=t.data.split(":")[1]+"px")});</script>
 `;
@@ -155,7 +155,7 @@ window.addEventListener("message",function(t){"string"==typeof t.data&&-1!=t.dat
 
       <div
         dangerouslySetInnerHTML={{
-          __html: `<iframe src="${value}/embed?url=${value}" id="ethtalk" width="100%" frameBorder="0"></iframe>`,
+          __html: `<iframe src="${process.env.REACT_APP_DOMAIN_NAME}/embed?url=${process.env.REACT_APP_DOMAIN_NAME}" id="ethtalk" width="100%" frameBorder="0"></iframe>`,
         }}
       />
 
