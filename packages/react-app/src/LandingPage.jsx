@@ -87,13 +87,13 @@ const HeartSvg = () => (
 );
 
 const LandingPage = () => {
-  const [value, setValue] = useState("https://ethtalk.app/");
+  const [value, setValue] = useState(`${process.env.REACT_APP_DOMAIN_NAME}`);
 
-  const codeSnippet = `<iframe src="https://ethtalk.app/embed?url=${value}" id="ethtalk" width="100%" frameBorder="0"></iframe>
+  const codeSnippet = `<iframe src="${value}/embed?url=${value}" id="ethtalk" width="100%" frameBorder="0"></iframe>
 
 <script>window.addEventListener("message",function(t){"string"==typeof t.data&&-1!=t.data.indexOf("height:")&&(document.getElementById("ethtalk").style.height=t.data.split(":")[1]+"px")});</script>
 `;
-
+window.addEventListener("message",function(t){"string"==typeof t.data&&-1!=t.data.indexOf("height:")&&(document.getElementById("ethtalk").style.height=t.data.split(":")[1]+"px")})
   return (
     <Container>
       <Logo>
@@ -155,7 +155,7 @@ const LandingPage = () => {
 
       <div
         dangerouslySetInnerHTML={{
-          __html: `<iframe src="https://ethtalk.app/embed?url=https://ethtalk.app" id="ethtalk" width="100%" frameBorder="0"></iframe>`,
+          __html: `<iframe src="${value}/embed?url=${value}" id="ethtalk" width="100%" frameBorder="0"></iframe>`,
         }}
       />
 

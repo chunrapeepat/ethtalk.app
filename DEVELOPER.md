@@ -31,4 +31,15 @@ Open `http://localhost:3000/embed?url=http://localhost:3000` then you will get s
 
 ![image](https://user-images.githubusercontent.com/62529025/151954794-f21ca27f-c65f-4fbb-b5ef-77e285047e8c.png)
 
+# How to deploy
+
+Change `ethtalk` in both `.firebaserc` in react-app and firebase-api to your project-id then run this command respectively:
+
+```
+yarn firebase-api:deploy
+yarn react-app:deploy
+```
+
+for firebase you need to have blaze plan to deploy
+
 

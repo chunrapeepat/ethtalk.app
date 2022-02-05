@@ -31,7 +31,7 @@ const EmbedPage = () => {
       <CommentWidget commentURL={url} />
       <Footer>
         Powered by{" "}
-        <a href="https://ethtalk.app" target="_blank">
+        <a href={`${process.env.NODE_ENV === "development"?"http":"https"}://${document.domain}`} target="_blank">
           ETHTalk
         </a>
       </Footer>
