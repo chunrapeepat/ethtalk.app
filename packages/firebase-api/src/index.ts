@@ -1,5 +1,5 @@
 import * as functions from "firebase-functions";
-import { authenticate, getAuthenticationChallenge } from "./controllers/auth";
+import { authenticate, getAuthenticationChallenge,authUnstoppable } from "./controllers/auth";
 
 const web3Utils = require("web3-utils");
 
@@ -48,6 +48,23 @@ export const login = functions.https.onCall(async (data) => {
 
   try {
     const customToken = await authenticate(publicAddress, signature);
+    return { customToken };
+  } catch (e) {
+    throw new functions.https.HttpsError("not-found", e.message);
+  }
+});
+/**
+ * Returns a JWT, given a publicAddress and signature
+ * @method loginWithUnstoppable
+ * @param {String} data.publicAddress
+ * @param {Object} data.addOn
+ * @throws Returns 401 if the user is not found or signature is invalid.
+ * @returns {Object} Firebase auth custom token
+ */
+ export const loginWithUnstoppable = functions.https.onCall(async (data) => {
+  const { publicAddress, addOn } = data;
+  try {
+    const customToken = await authUnstoppable(publicAddress, addOn);
     return { customToken };
   } catch (e) {
     throw new functions.https.HttpsError("not-found", e.message);

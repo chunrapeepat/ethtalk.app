@@ -21,9 +21,11 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.8",
+    "@uauth/js": "^0.7.9",
+    "@uauth/web3modal": "^0.7.9",
     "@uniswap/sdk": "^3.0.3",
     "@uniswap/v2-periphery": "^1.1.0-beta.0",
-    "@walletconnect/web3-provider": "^1.5.0",
+    "@walletconnect/web3-provider": "^1.7.1",
     "antd": "4.16.0",
     "apollo-boost": "^0.4.9",
     "apollo-client": "^2.6.10",
@@ -57,7 +59,7 @@
     "styled-components": "^5.3.1",
     "uuid": "^8.3.2",
     "walletlink": "^2.1.5",
-    "web3modal": "^1.9.1"
+    "web3modal": "^1.9.5"
   },
   "devDependencies": {
     "@apollo/client": "^3.3.21",
