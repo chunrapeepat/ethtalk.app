@@ -18,10 +18,10 @@ export const firebaseLogin = async signer => {
   return customToken;
 };
 
-export const firebaseLoginWithUnstoppable = async (publicAddress,addOn) => {
-    const login = httpsCallable(functions, "loginWithUnstoppable");
+export const firebaseLoginWithUnstoppable = async (publicAddress) => {
+    const login = httpsCallable(functions, "login");
     
-  const loginResult = await login({ publicAddress, addOn });
+  const loginResult = await login({ publicAddress },true);
   const { customToken } = loginResult.data;
 
   return customToken;

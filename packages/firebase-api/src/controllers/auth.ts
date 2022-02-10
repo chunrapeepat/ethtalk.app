@@ -32,10 +32,12 @@ export const authenticate = async (
 };
 
 export const authUnstoppable = async (
-  publicAddress: string,
-  addOn: object
+  publicAddress: string
 ) => {
-    return await admin.auth().createCustomToken(publicAddress, addOn);
+
+     return await admin.auth().createCustomToken(publicAddress);
+  
+
 };
 
 export const getAuthenticationChallenge = async (publicAddress: string) => {

@@ -42,7 +42,7 @@ function useProvideAuth() {
     .then(() => setUser(undefined))
     .catch((err)=> {
   
-        console.log(error)
+        console.log(err)
     })
   
   };

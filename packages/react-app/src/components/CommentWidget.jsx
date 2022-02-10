@@ -142,11 +142,12 @@ const CommentWidget = ({ commentURL }) => {
     setIsLoading(true);
     try {
       const authorization=await unstoppableAuth.signin();
-      const customToken = await firebaseLoginWithUnstoppable(authorization?.idToken?.sub,authorization);
+      const customToken = await firebaseLoginWithUnstoppable(authorization?.idToken?.sub);
       await signInWithCustomToken(auth, customToken);
       setError("");
     } catch (e) {
       console.log(e.message)
+      unstoppableAuth.signout()
       setIsLoading(false);
     }
     setIsLoading(false);
