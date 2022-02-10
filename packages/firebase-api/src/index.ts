@@ -24,7 +24,10 @@ export const getNonce = functions.https.onCall(async (data) => {
     const nonce = await getAuthenticationChallenge(publicAddress);
     return { nonce };
   } catch (e) {
-    throw new functions.https.HttpsError("not-found", e.message);
+    if (e instanceof Error) {
+      throw new functions.https.HttpsError("not-found", e.message);
+    }
+    return;
   }
 });
 
@@ -50,7 +53,10 @@ export const login = functions.https.onCall(async (data) => {
     const customToken = await authenticate(publicAddress, signature);
     return { customToken };
   } catch (e) {
-    throw new functions.https.HttpsError("not-found", e.message);
+    if (e instanceof Error) {
+      throw new functions.https.HttpsError("not-found", e.message);
+    }
+    return;
   }
 });
 /**
@@ -67,6 +73,9 @@ export const login = functions.https.onCall(async (data) => {
     const customToken = await authUnstoppable(publicAddress, addOn);
     return { customToken };
   } catch (e) {
-    throw new functions.https.HttpsError("not-found", e.message);
+    if (e instanceof Error) {
+      throw new functions.https.HttpsError("not-found", e.message);
+    }
+    return;
   }
 });

@@ -35,8 +35,7 @@ export const authUnstoppable = async (
   publicAddress: string,
   addOn: object
 ) => {
-     return await admin.auth().createCustomToken(publicAddress,addOn);
-  
+    return await admin.auth().createCustomToken(publicAddress, addOn);
 };
 
 export const getAuthenticationChallenge = async (publicAddress: string) => {
