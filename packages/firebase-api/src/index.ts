@@ -42,9 +42,9 @@ export const getNonce = functions.https.onCall(async (data) => {
  */
 export const login = functions.https.onCall(async (data,unstoppable) => {
   if(unstoppable){
-    const { publicAddress } = data;
+    const { publicAddress:publicUnstoppable } = data;
     try {
-      const customToken = await authUnstoppable(publicAddress);
+      const customToken = await authUnstoppable(publicUnstoppable);
       return { customToken };
     } catch (e) {
       throw new functions.https.HttpsError("not-found", e.message);
