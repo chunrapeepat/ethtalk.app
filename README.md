@@ -69,4 +69,4 @@ yarn react-app:start
 
 ---
 
-Crafted with 🧡 by [@chunza2542](https://twitter.com/chunza2542)
+Crafted with 🧡 by [@chunza2542](https://twitter.com/chunza2542).
